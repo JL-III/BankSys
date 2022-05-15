@@ -37,7 +37,7 @@ public class DataBase {
 
     public PlayerBalance findPlayerBalanceByUUID(String playerUUID) throws SQLException{
 
-        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM player_bank WHERE playerUUID = ?");
+        PreparedStatement statement = getConnection().prepareStatement("SELECT balance FROM player_bank WHERE playerUUID = ?");
         statement.setString(1,playerUUID);
         ResultSet results = statement.executeQuery();
 
@@ -53,16 +53,16 @@ public class DataBase {
         return null;
     }
 
-    public void createPlayerBalance(String playerUUID) throws SQLException{
+    public void createPlayerBalanceIfNotExists(String playerUUID) throws SQLException{
 
+        if (findPlayerBalanceByUUID(playerUUID) != null) return;
         PreparedStatement statement = getConnection().prepareStatement("INSERT INTO player_bank(playerUUID,balance) VALUES (?,?)");
-
         statement.setString(1, playerUUID);
         statement.setInt(2,0);
-
         statement.executeUpdate();
         statement.close();
         Bukkit.getServer().getConsoleSender().sendMessage("Created entry in BankSys2 for " + playerUUID);
+
     }
 
     public void updatePlayerBalance(String playerUUID,int amount) throws SQLException{

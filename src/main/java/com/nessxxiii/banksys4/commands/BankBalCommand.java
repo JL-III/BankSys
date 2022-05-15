@@ -44,7 +44,7 @@ public class BankBalCommand implements CommandExecutor {
 
                 if (playerBalance == null) {
 /*                    playerBalance = new PlayerBalance(player.getUniqueId().toString(), 0);*/
-                    this.plugin.getDatabase().createPlayerBalance(playerUUID.toString());
+                    this.plugin.getDatabase().createPlayerBalanceIfNotExists(playerUUID.toString());
                     player.sendMessage(ChatColor.GREEN + "BankBalance: " + ChatColor.YELLOW + "0");
                     return true;
                 } else {

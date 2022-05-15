@@ -1,6 +1,6 @@
 name: Banksys4
 version: '${project.version}'
-main: com.nessxxiii.banksys2.Banksys2
+main: com.nessxxiii.banksys4.Banksys4
 api-version: 1.18
 depend: [Vault]
 commands:
