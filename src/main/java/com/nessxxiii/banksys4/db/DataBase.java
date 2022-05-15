@@ -1,5 +1,5 @@
-package com.nessxxiii.banksys2.db;
-import com.nessxxiii.banksys2.models.PlayerBalance;
+package com.nessxxiii.banksys4.db;
+import com.nessxxiii.banksys4.models.PlayerBalance;
 import org.bukkit.Bukkit;
 
 import java.sql.*;

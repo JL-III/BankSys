@@ -1,7 +1,7 @@
-package com.nessxxiii.banksys2.commands;
+package com.nessxxiii.banksys4.commands;
 
-import com.nessxxiii.banksys2.Banksys2;
-import com.nessxxiii.banksys2.models.PlayerBalance;
+import com.nessxxiii.banksys4.Banksys2;
+import com.nessxxiii.banksys4.models.PlayerBalance;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

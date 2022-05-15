@@ -1,9 +1,9 @@
-package com.nessxxiii.banksys2;
+package com.nessxxiii.banksys4;
 
-import com.nessxxiii.banksys2.commands.BankBalCommand;
-import com.nessxxiii.banksys2.commands.DepositCommand;
-import com.nessxxiii.banksys2.commands.WithdrawCommand;
-import com.nessxxiii.banksys2.db.DataBase;
+import com.nessxxiii.banksys4.commands.BankBalCommand;
+import com.nessxxiii.banksys4.commands.DepositCommand;
+import com.nessxxiii.banksys4.commands.WithdrawCommand;
+import com.nessxxiii.banksys4.db.DataBase;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;

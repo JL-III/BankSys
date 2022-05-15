@@ -1,4 +1,4 @@
-package com.nessxxiii.banksys2.models;
+package com.nessxxiii.banksys4.models;
 
 public class PlayerBalance {
 
