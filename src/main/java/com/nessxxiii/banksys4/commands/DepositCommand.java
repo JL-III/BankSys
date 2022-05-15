@@ -60,24 +60,27 @@ public class DepositCommand implements CommandExecutor {
 
             DataBase database = new DataBase();
             String UUID = playerUUID.toString();
-            int oldBal = 0;
-            int newBal = 0;
+            int oldBal;
+            int newBal;
+            EconomyResponse response = economy.withdrawPlayer(player,amount);
 
-            try {
-                database.createPlayerBalanceIfNotExists(UUID);
-                oldBal = database.findPlayerBalanceByUUID(UUID).getBalance();
-                database.updatePlayerBalance(UUID,amount);
-                newBal = database.findPlayerBalanceByUUID(UUID).getBalance();
+            if (response.transactionSuccess()){
+                try {
+                    database.createPlayerBalanceIfNotExists(UUID);
+                    oldBal = database.findPlayerBalanceByUUID(UUID).getBalance();
+                    database.updatePlayerBalance(UUID,amount);
+                    newBal = database.findPlayerBalanceByUUID(UUID).getBalance();
 
-            }catch (SQLException ex){
-                player.sendMessage("There was an error depositing money, please let an administrator know. ErrorCodeD1");
-                ex.printStackTrace();
-                return false;
-            }
+                }catch (SQLException ex){
+                    player.sendMessage("There was an error depositing money, please let an administrator know. ErrorCodeD1");
+                    economy.depositPlayer(player,amount);
+                    ex.printStackTrace();
+                    return false;
+                }
 
-            if (oldBal + amount == newBal) {
-                EconomyResponse response = economy.withdrawPlayer(player,amount);
-                if (response.transactionSuccess()){
+                if (oldBal + amount == newBal) {
+
+
                     player.sendMessage(ChatColor.GREEN + "Deposit amount: " + ChatColor.YELLOW + amount);
                     player.sendMessage(ChatColor.GREEN + "PocketBal: " + economy.getBalance(player));
                     player.sendMessage(ChatColor.GREEN + "BankBal: " + ChatColor.YELLOW + newBal);

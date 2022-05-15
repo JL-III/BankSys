@@ -20,9 +20,12 @@ public class WithdrawCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        Player player;
-        if (sender instanceof Player){
-            player = (Player) sender;
+
+        if (!(sender instanceof Player)) {
+            Bukkit.getServer().getConsoleSender().sendMessage("You must be a player to use this command");
+            return false;
+        }
+            Player player = (Player) sender;
             UUID playerUUID = player.getUniqueId();
             Economy economy = Banksys4.getEconomy();
 
@@ -61,8 +64,8 @@ public class WithdrawCommand implements CommandExecutor {
 
                 DataBase database = new DataBase();
                 String UUID = playerUUID.toString();
-                int oldBal = 0;
-                int newBal = 0;
+                int oldBal;
+                int newBal;
 
                 try {
                     database.createPlayerBalanceIfNotExists(UUID);
@@ -95,8 +98,7 @@ public class WithdrawCommand implements CommandExecutor {
                     return false;
                 }
                 return true;
-            }
-            return false;
+
 
         }
         return true;
