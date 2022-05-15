@@ -11,10 +11,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-public final class Banksys2 extends JavaPlugin {
+public final class Banksys4 extends JavaPlugin {
 
-    private static Banksys2 plugin;
-    public static Banksys2 getPlugin() {
+    private static Banksys4 plugin;
+    public static Banksys4 getPlugin() {
         return plugin;
     }
     private static final Logger log = Logger.getLogger("Minecraft");

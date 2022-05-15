@@ -1,6 +1,6 @@
 package com.nessxxiii.banksys4.commands;
 
-import com.nessxxiii.banksys4.Banksys2;
+import com.nessxxiii.banksys4.Banksys4;
 import com.nessxxiii.banksys4.models.PlayerBalance;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -14,9 +14,9 @@ import java.util.UUID;
 
 public class BankBalCommand implements CommandExecutor {
 
-    private final Banksys2 plugin;
+    private final Banksys4 plugin;
 
-    public BankBalCommand(Banksys2 plugin) {
+    public BankBalCommand(Banksys4 plugin) {
         this.plugin = plugin;
     }
 

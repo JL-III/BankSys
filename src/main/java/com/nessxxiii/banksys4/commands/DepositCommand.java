@@ -1,6 +1,6 @@
 package com.nessxxiii.banksys4.commands;
 
-import com.nessxxiii.banksys4.Banksys2;
+import com.nessxxiii.banksys4.Banksys4;
 import com.nessxxiii.banksys4.db.DataBase;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -24,7 +24,7 @@ public class DepositCommand implements CommandExecutor {
         if (sender instanceof Player){
             player = (Player) sender;
             UUID playerUUID = player.getUniqueId();
-            Economy economy = Banksys2.getEconomy();
+            Economy economy = Banksys4.getEconomy();
 
 
 
