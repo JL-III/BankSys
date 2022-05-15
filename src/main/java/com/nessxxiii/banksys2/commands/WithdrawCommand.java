@@ -26,7 +26,6 @@ public class WithdrawCommand implements CommandExecutor {
 
             Economy economy = Banksys2.getEconomy();
 
-            player.sendMessage("Testing git integration");
 
             if (!player.hasPermission("bank.deposit")){
                 player.sendMessage("You do not have permission for that command!");
