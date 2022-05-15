@@ -1,0 +1,15 @@
+name: Banksys2
+version: '${project.version}'
+main: com.nessxxiii.banksys2.Banksys2
+api-version: 1.18
+depend: [Vault]
+commands:
+  deposit:
+    description: deposits money into bank
+    usage: /deposit <amount>
+  withdraw:
+    description: withdraws money from bank
+    usage: /withdraw <amount>
+  bankbal:
+    description: returns a balance
+    usage: This command does not require arguments
