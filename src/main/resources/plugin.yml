@@ -13,3 +13,4 @@ commands:
   bankbal:
     description: returns a balance
     usage: This command does not require arguments
+`

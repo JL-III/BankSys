@@ -72,24 +72,22 @@ public class DepositCommand implements CommandExecutor {
                     newBal = database.findPlayerBalanceByUUID(UUID).getBalance();
 
                 }catch (SQLException ex){
-                    player.sendMessage("There was an error depositing money, please let an administrator know. ErrorCodeD1");
+                    player.sendMessage(ChatColor.RED + "There was an error depositing money, please let an administrator know. ErrorCodeD1");
                     economy.depositPlayer(player,amount);
                     ex.printStackTrace();
                     return false;
                 }
 
                 if (oldBal + amount == newBal) {
-
-
                     player.sendMessage(ChatColor.GREEN + "Deposit amount: " + ChatColor.YELLOW + amount);
                     player.sendMessage(ChatColor.GREEN + "PocketBal: " + economy.getBalance(player));
                     player.sendMessage(ChatColor.GREEN + "BankBal: " + ChatColor.YELLOW + newBal);
                 } else {
-                    player.sendMessage("There was an error depositing money, please let an administrator know. ErrorCodeD2");
+                    player.sendMessage(ChatColor.RED + "There was an error depositing money, please let an administrator know. ErrorCodeD2");
                     return false;
                 }
             } else {
-                player.sendMessage("There was an error depositing money, please let an administrator know. ErrorCodeD3");
+                player.sendMessage(ChatColor.RED + "There was an error depositing money, please let an administrator know. ErrorCodeD3");
                 return true;
             }
             return true;

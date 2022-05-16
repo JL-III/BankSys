@@ -15,7 +15,6 @@ import java.util.UUID;
 public class BankBalCommand implements CommandExecutor {
 
     private final Banksys4 plugin;
-
     public BankBalCommand(Banksys4 plugin) {
         this.plugin = plugin;
     }
@@ -23,47 +22,31 @@ public class BankBalCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        Player player;
-        if (sender instanceof Player){
-            player = (Player) sender;
-            UUID playerUUID = player.getUniqueId();
-            if (!player.hasPermission("bank.balance")){
-                player.sendMessage("You do not have permission for that command!");
-                return false;
-            }
-            if (args.length > 0) {
-                return false;
-            }
+        if (!(sender instanceof Player)) return false;
+        Player player = (Player) sender;
+        UUID playerUUID = player.getUniqueId();
+        String UUID = playerUUID.toString();
 
-/*            player.sendMessage("uuid: " + playerUUID);*/
-
-
-            try {
-
-                PlayerBalance playerBalance = this.plugin.getDatabase().findPlayerBalanceByUUID(player.getUniqueId().toString());
-
-                if (playerBalance == null) {
-/*                    playerBalance = new PlayerBalance(player.getUniqueId().toString(), 0);*/
-                    this.plugin.getDatabase().createPlayerBalanceIfNotExists(playerUUID.toString());
-                    player.sendMessage(ChatColor.GREEN + "BankBalance: " + ChatColor.YELLOW + "0");
-                    return true;
-                } else {
-                    player.sendMessage(ChatColor.GREEN + "BankBalance: " + ChatColor.YELLOW + playerBalance.getBalance());
-                    return true;
-
-                }
-            }catch (SQLException ex){
-
-                ex.printStackTrace();
-
-            }
-
-
-
+        if (!player.hasPermission("bank.balance")){
+            player.sendMessage(ChatColor.RED + "You do not have permission for that command!");
             return false;
-
         }
-        return false;
+        if (args.length > 0) {
+            return false;
+        }
+        try {
+            PlayerBalance playerBalance = this.plugin.getDatabase().findPlayerBalanceByUUID(UUID);
+            if (playerBalance == null) {
+                this.plugin.getDatabase().createPlayerBalanceIfNotExists(UUID);
+                player.sendMessage(ChatColor.GREEN + "BankBalance: " + ChatColor.YELLOW + "0");
+            } else {
+                player.sendMessage(ChatColor.GREEN + "BankBalance: " + ChatColor.YELLOW + playerBalance.getBalance());
+            }
+            return true;
+        }catch (SQLException ex){
+            ex.printStackTrace();
+            player.sendMessage(ChatColor.RED + "Unable to retrieve balance, please let an administrator know. ErrorCode:B1");
+            return true;
+        }
     }
-
 }
