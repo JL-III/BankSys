@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Banksys4 extends JavaPlugin {
@@ -31,9 +32,9 @@ public final class Banksys4 extends JavaPlugin {
             return;
         }
         plugin = this;
-        getCommand("deposit").setExecutor(new DepositCommand());
-        getCommand("bankbal").setExecutor(new BankBalCommand(this));
-        getCommand("withdraw").setExecutor(new WithdrawCommand());
+        Objects.requireNonNull(getCommand("deposit")).setExecutor(new DepositCommand());
+        Objects.requireNonNull(getCommand("bankbal")).setExecutor(new BankBalCommand(this));
+        Objects.requireNonNull(getCommand("withdraw")).setExecutor(new WithdrawCommand());
 
         try {
             this.database = new DataBase();

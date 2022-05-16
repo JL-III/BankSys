@@ -67,9 +67,9 @@ public class DepositCommand implements CommandExecutor {
             if (response.transactionSuccess()){
                 try {
                     database.createPlayerBalanceIfNotExists(UUID);
-                    oldBal = database.findPlayerBalanceByUUID(UUID).getBalance();
+                    oldBal = database.findPlayerBalance(UUID).getBalance();
                     database.updatePlayerBalance(UUID,amount);
-                    newBal = database.findPlayerBalanceByUUID(UUID).getBalance();
+                    newBal = database.findPlayerBalance(UUID).getBalance();
 
                 }catch (SQLException ex){
                     player.sendMessage(ChatColor.RED + "There was an error depositing money, please let an administrator know. ErrorCodeD1");

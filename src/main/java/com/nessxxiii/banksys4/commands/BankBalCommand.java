@@ -8,7 +8,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -35,7 +34,7 @@ public class BankBalCommand implements CommandExecutor {
             return false;
         }
         try {
-            PlayerBalance playerBalance = this.plugin.getDatabase().findPlayerBalanceByUUID(UUID);
+            PlayerBalance playerBalance = this.plugin.getDatabase().findPlayerBalance(UUID);
             if (playerBalance == null) {
                 this.plugin.getDatabase().createPlayerBalanceIfNotExists(UUID);
                 player.sendMessage(ChatColor.GREEN + "BankBalance: " + ChatColor.YELLOW + "0");
