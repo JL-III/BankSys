@@ -1,5 +1,5 @@
 package com.nessxxiii.banksys4.db;
-import com.nessxxiii.banksys4.models.PlayerBalance;
+import com.nessxxiii.banksys4.models.PlayerTransactionInfo;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
@@ -35,7 +35,7 @@ public class DataBase {
         Bukkit.getServer().getConsoleSender().sendMessage("Initialized Connection");
     }
 
-    public PlayerBalance findPlayerBalance(String playerUUID) throws SQLException{
+    public PlayerTransactionInfo findPlayerBalance(String playerUUID) throws SQLException{
 
         PreparedStatement statement = getConnection().prepareStatement("SELECT balance FROM player_bank WHERE playerUUID = ?");
         statement.setString(1,playerUUID);
@@ -45,9 +45,9 @@ public class DataBase {
 
             int balance = results.getInt("balance");
 
-            PlayerBalance playerBalance = new PlayerBalance(playerUUID,balance);
+            PlayerTransactionInfo playerTransactionInfo = new PlayerTransactionInfo(playerUUID, balance);
             statement.close();
-            return playerBalance;
+            return playerTransactionInfo;
         }
         statement.close();
         return null;
@@ -67,8 +67,8 @@ public class DataBase {
 
     public void updatePlayerBalance(String playerUUID,int amount) throws SQLException{
 
-        PlayerBalance playerBalance = findPlayerBalance(playerUUID);
-        int currentBalance = playerBalance.getBalance();
+        PlayerTransactionInfo playerTransactionInfo = findPlayerBalance(playerUUID);
+        int currentBalance = playerTransactionInfo.getBalance();
         int newBalance = currentBalance + amount;
 
         PreparedStatement statement = getConnection().prepareStatement("UPDATE player_bank SET balance = ? WHERE playerUUID = ?");

@@ -1,8 +1,8 @@
 package com.nessxxiii.banksys4;
 
-import com.nessxxiii.banksys4.commands.BankBalCommand;
-import com.nessxxiii.banksys4.commands.DepositCommand;
-import com.nessxxiii.banksys4.commands.WithdrawCommand;
+import com.nessxxiii.banksys4.commands.PlayerBalance;
+import com.nessxxiii.banksys4.commands.BankCommands;
+import com.nessxxiii.banksys4.commands.PlayerWithdraw;
 import com.nessxxiii.banksys4.db.DataBase;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -32,9 +32,7 @@ public final class Banksys4 extends JavaPlugin {
             return;
         }
         plugin = this;
-        Objects.requireNonNull(getCommand("deposit")).setExecutor(new DepositCommand());
-        Objects.requireNonNull(getCommand("bankbal")).setExecutor(new BankBalCommand(this));
-        Objects.requireNonNull(getCommand("withdraw")).setExecutor(new WithdrawCommand());
+        Objects.requireNonNull(getCommand("bank")).setExecutor(new BankCommands(this));
 
         try {
             this.database = new DataBase();

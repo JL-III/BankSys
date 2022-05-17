@@ -4,9 +4,9 @@ main: com.nessxxiii.banksys4.Banksys4
 api-version: 1.18
 depend: [Vault]
 commands:
-  deposit:
+  bank:
     description: deposits money into bank
-    usage: /deposit <amount>
+    usage: /bank deposit <amount>
   withdraw:
     description: withdraws money from bank
     usage: /withdraw <amount>
