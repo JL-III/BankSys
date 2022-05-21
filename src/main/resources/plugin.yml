@@ -6,10 +6,4 @@ depend: [Vault]
 commands:
   bank:
     description: deposits money into bank
-    usage: /bank deposit <amount>
-  withdraw:
-    description: withdraws money from bank
-    usage: /withdraw <amount>
-  bankbal:
-    description: returns a balance
-    usage: This command does not require arguments
+    usage: /bank <subcommand> <amount>

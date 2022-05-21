@@ -1,8 +1,6 @@
 package com.nessxxiii.banksys4;
 
-import com.nessxxiii.banksys4.commands.PlayerBalance;
 import com.nessxxiii.banksys4.commands.BankCommands;
-import com.nessxxiii.banksys4.commands.PlayerWithdraw;
 import com.nessxxiii.banksys4.db.DataBase;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -26,6 +24,9 @@ public final class Banksys4 extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        getConfig().options().copyDefaults();
+        saveDefaultConfig();
+
         if (!setupEconomy() ) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
@@ -35,12 +36,14 @@ public final class Banksys4 extends JavaPlugin {
         Objects.requireNonNull(getCommand("bank")).setExecutor(new BankCommands(this));
 
         try {
-            this.database = new DataBase();
+            this.database = new DataBase(this);
             Bukkit.getServer().getConsoleSender().sendMessage("Sent to database initializer");
             database.initializeDatabase();
         }catch (SQLException ex){
             Bukkit.getServer().getConsoleSender().sendMessage("Unable to connect to database and create tables");
         }
+
+
 
     }
 

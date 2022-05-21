@@ -1,10 +1,18 @@
 package com.nessxxiii.banksys4.db;
+import com.nessxxiii.banksys4.Banksys4;
 import com.nessxxiii.banksys4.models.PlayerTransactionInfo;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.sql.*;
 
 public class DataBase {
+
+    private final Banksys4 banksys4;
+
+    public DataBase(Banksys4 banksys4){
+        this.banksys4 = banksys4;
+    }
 
     private Connection connection;
 
@@ -14,9 +22,9 @@ public class DataBase {
             return connection;
         }
         //HOWTO SET IN CONFIG
-        String url = "jdbc:mysql://cichlid.bloom.host:3306/s12917_bank_sys";
-        String user = "u12917_yzg8DHopof";
-        String password = "0i1B7yuYi4F^+v.7Lb1xNI11";
+        String url = banksys4.getConfig().getString("URL");
+        String user = banksys4.getConfig().getString("USER");
+        String password = banksys4.getConfig().getString("PASSWORD");
 
         this.connection = DriverManager.getConnection(url,user,password);
         Bukkit.getServer().getConsoleSender().sendMessage("Connected to database!");

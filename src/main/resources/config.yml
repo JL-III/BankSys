@@ -1,0 +1,10 @@
+#MYSQL database set up
+#URL is jdbc:msql://URL:port/tablename
+URL:
+USER:
+PASSWORD:
+
+#future settings
+#minimum_withdrawal: 1000
+#maximum_withdrawal: 1000000
+

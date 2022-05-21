@@ -20,7 +20,8 @@ public class PlayerDeposit {
         UUID playerUUID = player.getUniqueId();
         ConsoleLogTransaction currentTransaction = new ConsoleLogTransaction();
 
-        if (amount > economy.getBalance(player)) {
+
+        if (amount > oldEssentialsBal) {
             player.sendMessage(ChatColor.RED + "Insufficient Funds.");
             player.sendMessage(ChatColor.GREEN + "Amount requested: " + ChatColor.YELLOW + amount);
             player.sendMessage(ChatColor.GREEN + "Pocket balance: " + ChatColor.RED + oldEssentialsBal.intValue());
@@ -28,7 +29,7 @@ public class PlayerDeposit {
             return;
         }
 
-        DataBase database = new DataBase();
+        DataBase database = new DataBase(Banksys4.getPlugin());
         String UUID = playerUUID.toString();
         int oldBal;
         int newBal;

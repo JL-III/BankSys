@@ -1,5 +1,6 @@
 package com.nessxxiii.banksys4.commands;
 
+import com.nessxxiii.banksys4.Banksys4;
 import com.nessxxiii.banksys4.db.DataBase;
 import com.nessxxiii.banksys4.models.ConsoleLogTransaction;
 import com.nessxxiii.banksys4.models.PlayerTransactionInfo;
@@ -17,7 +18,7 @@ public class PlayerWithdraw  {
         String transactionType = "Withdraw";
         ConsoleLogTransaction currentTransaction = new ConsoleLogTransaction();
         PlayerTransactionInfo thisTransaction;
-        DataBase database = new DataBase();
+        DataBase database = new DataBase(Banksys4.getPlugin());
         String name = player.getName();
         String UUID = playerUUID.toString();
         int oldBankBal;
