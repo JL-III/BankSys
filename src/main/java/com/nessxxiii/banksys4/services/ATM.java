@@ -1,44 +1,39 @@
-package com.nessxxiii.banksys4.commands;
+package com.nessxxiii.banksys4.services;
 
 import com.nessxxiii.banksys4.Banksys4;
-import com.nessxxiii.banksys4.db.DataBase;
+import com.nessxxiii.banksys4.db.PlayerBank;
 import com.nessxxiii.banksys4.models.TransactionLog;
 import com.nessxxiii.banksys4.models.TransactionStatus;
 import com.nessxxiii.banksys4.models.TransactionType;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
 import java.util.UUID;
 
 public class ATM {
-    private final DataBase database;
+    private final PlayerBank bank;
     private final Economy economy;
 
     public ATM(Banksys4 plugin) {
-        this.database = plugin.getDatabase();
+        this.bank = new PlayerBank(plugin);
         this.economy = plugin.getEconomy();
     }
 
-    public void getBalance(Player player) {
-        String name = player.getName();
+    public Integer getBalance(Player player) {
         UUID playerUUID = player.getUniqueId();
         String UUID = playerUUID.toString();
 
         try {
-            database.createPlayerBalanceIfNotExists(UUID);
-            Integer balance = database.findPlayerBalance(UUID);
-            player.sendMessage(ChatColor.GREEN + "BankBalance: " + ChatColor.YELLOW + balance);
-            new TransactionLog(name, balance, TransactionType.INQUIRY, TransactionStatus.SUCCESS).print();
+            bank.createPlayerBalanceIfNotExists(UUID);
+            return bank.findPlayerBalance(UUID);
         } catch (Exception e) {
-            player.sendMessage(ChatColor.RED + "Unable to retrieve balance, please let an administrator know: " + TransactionStatus.ERROR_E5);
-            new TransactionLog(name, 0, TransactionType.INQUIRY, TransactionStatus.ERROR_E5).print();
             e.printStackTrace();
+            return -1;
         }
     }
 
-    public void withdraw(Player player, int amount) {
+    public void withdraw(OfflinePlayer player, int amount) {
         String name = player.getName();
         UUID playerUUID = player.getUniqueId();
         String UUID = playerUUID.toString();
@@ -50,27 +45,23 @@ public class ATM {
 
         try {
             // Fetch bank balance
-            database.createPlayerBalanceIfNotExists(UUID);
-            oldBankBal = database.findPlayerBalance(UUID);
+            bank.createPlayerBalanceIfNotExists(UUID);
+            oldBankBal = bank.findPlayerBalance(UUID);
 
             // Validate that player has sufficient funds
             if (amount > oldBankBal) {
-                player.sendMessage(ChatColor.RED + "Insufficient Funds.");
-                player.sendMessage(ChatColor.GREEN + "Amount requested: " + ChatColor.YELLOW + amount);
-                player.sendMessage(ChatColor.GREEN + "Bank balance: " + ChatColor.RED + oldBankBal);
                 new TransactionLog(name, amount, TransactionType.WITHDRAW, TransactionStatus.INSUFFICIENT_FUNDS).print();
                 return;
             }
 
             // Remove amount from players bank
-            database.updatePlayerBalance(UUID, -amount);
-            newBankBal = database.findPlayerBalance(UUID);
+            bank.updatePlayerBalance(UUID, -amount);
+            newBankBal = bank.findPlayerBalance(UUID);
         } catch (Exception ex) {
             // Database update failed - notify the player and print a log
             // Neither the players balance nor the database should have changed.
             new TransactionLog(name, amount, TransactionType.WITHDRAW, TransactionStatus.ERROR_E1).print();
             ex.printStackTrace();
-            player.sendMessage(ChatColor.RED + "There was an error withdrawing money, please let an administrator know: " + TransactionStatus.ERROR_E1);
             return;
         }
 
@@ -80,11 +71,7 @@ public class ATM {
         newEssentialsBal = economy.getBalance(player);
 
         if (response.transactionSuccess()) {
-            // Transaction successful, send confirmation to player and print a log
-            player.sendMessage(ChatColor.GREEN + "Withdraw amount: " + ChatColor.RED + amount);
-            player.sendMessage(ChatColor.GREEN + "PocketBal: " + economy.getBalance(player));
-            player.sendMessage(ChatColor.GREEN + "BankBal: " + ChatColor.YELLOW + newBankBal);
-
+            // Transaction successful
             TransactionLog log = new TransactionLog(name, amount, TransactionType.WITHDRAW, TransactionStatus.SUCCESS);
             log.setOldBankBal(oldBankBal);
             log.setNewBankBal(newBankBal);
@@ -92,10 +79,9 @@ public class ATM {
             log.setNewEssentialsBal(newEssentialsBal.intValue());
             log.print();
         } else {
-            // Transaction failed, send message to player and print a log.
+            // Transaction failed
             // We withdrew the amount from the players balance, but they never received the money.
             // This will require manual review and a refund.
-            player.sendMessage(ChatColor.RED + "There was an error withdrawing money, please let an administrator know: " + TransactionStatus.ERROR_E2);
             TransactionLog log = new TransactionLog(name, amount, TransactionType.WITHDRAW, TransactionStatus.ERROR_E2);
             log.setOldBankBal(oldBankBal);
             log.setNewBankBal(newBankBal);
@@ -105,7 +91,7 @@ public class ATM {
         }
     }
 
-    public void deposit(Player player, int amount) {
+    public void deposit(OfflinePlayer player, int amount) {
         String name = player.getName();
         UUID playerUUID = player.getUniqueId();
         String UUID = playerUUID.toString();
@@ -117,9 +103,6 @@ public class ATM {
 
         // Validate that player has sufficient funds
         if (amount > oldEssentialsBal) {
-            player.sendMessage(ChatColor.RED + "Insufficient Funds.");
-            player.sendMessage(ChatColor.GREEN + "Amount requested: " + ChatColor.YELLOW + amount);
-            player.sendMessage(ChatColor.GREEN + "Pocket balance: " + ChatColor.RED + oldEssentialsBal.intValue());
             new TransactionLog(name, amount, TransactionType.DEPOSIT, TransactionStatus.INSUFFICIENT_FUNDS).print();
             return;
         }
@@ -131,16 +114,12 @@ public class ATM {
         if (response.transactionSuccess()) {
             try {
                 // Add the balance to the players bank
-                database.createPlayerBalanceIfNotExists(UUID);
-                oldBankBal = database.findPlayerBalance(UUID);
-                database.updatePlayerBalance(UUID, amount);
-                newBankBal = database.findPlayerBalance(UUID);
+                bank.createPlayerBalanceIfNotExists(UUID);
+                oldBankBal = bank.findPlayerBalance(UUID);
+                bank.updatePlayerBalance(UUID, amount);
+                newBankBal = bank.findPlayerBalance(UUID);
 
-                // Transaction was successful - send confirmation to player and print a log
-                player.sendMessage(ChatColor.GREEN + "Withdraw amount: " + ChatColor.RED + amount);
-                player.sendMessage(ChatColor.GREEN + "PocketBal: " + economy.getBalance(player));
-                player.sendMessage(ChatColor.GREEN + "BankBal: " + ChatColor.YELLOW + newBankBal);
-
+                // Transaction was successful
                 TransactionLog log = new TransactionLog(name, amount, TransactionType.DEPOSIT, TransactionStatus.SUCCESS);
                 log.setOldBankBal(oldBankBal);
                 log.setNewBankBal(newBankBal);
@@ -151,7 +130,6 @@ public class ATM {
                 // Bank transaction failed - send message to player and print a log.
                 // The bank balance should not have been modified.
                 // The player balance was modified, and an automated refund is issued - this should be verified manually
-                player.sendMessage(ChatColor.RED + "There was an error depositing money, please let an administrator know: " + TransactionStatus.ERROR_E3);
                 economy.depositPlayer(player, amount);
                 newEssentialsBal = economy.getBalance(player);
 
@@ -164,9 +142,8 @@ public class ATM {
                 ex.printStackTrace();
             }
         } else {
-            // Economy transaction failed - send message to player a print a log
+            // Economy transaction failed
             // Neither the players balance nor bank balance should have been modified.
-            player.sendMessage(ChatColor.RED + "There was an error depositing money, please let an administrator know: " + TransactionStatus.ERROR_E4);
             TransactionLog log = new TransactionLog(name, amount, TransactionType.DEPOSIT, TransactionStatus.ERROR_E4);
             log.setOldBankBal(oldBankBal);
             log.setNewBankBal(newBankBal);
