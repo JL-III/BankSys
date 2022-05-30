@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerBank {
-    private final Database database;
+    private final Banksys4 plugin;
 
     public PlayerBank(Banksys4 plugin) {
-        this.database = plugin.getDatabase();
+        this.plugin = plugin;
     }
 
     public void initialize() throws SQLException {
-        Statement statement = database.getConnection().createStatement();
+        Statement statement = plugin.getDatabase().getConnection().createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key,balance INT(30))");
         statement.close();
     }
@@ -27,7 +27,7 @@ public class PlayerBank {
     public List<PlayerBalance> getBalances() throws SQLException {
         List<PlayerBalance> result = new ArrayList<>();
 
-        PreparedStatement statement = database.getConnection().prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
+        PreparedStatement statement = plugin.getDatabase().getConnection().prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
         ResultSet rs = statement.executeQuery();
 
         while (rs.next()) {
@@ -43,7 +43,7 @@ public class PlayerBank {
     public Integer findPlayerBalance(String playerUUID) throws SQLException {
         Integer balance = null;
 
-        PreparedStatement statement = database.getConnection().prepareStatement("SELECT balance FROM player_bank WHERE playerUUID = ?");
+        PreparedStatement statement = plugin.getDatabase().getConnection().prepareStatement("SELECT balance FROM player_bank WHERE playerUUID = ?");
         statement.setString(1, playerUUID);
         ResultSet resultSet = statement.executeQuery();
 
@@ -58,7 +58,7 @@ public class PlayerBank {
 
     public void createPlayerBalanceIfNotExists(String playerUUID) throws SQLException {
         if (findPlayerBalance(playerUUID) != null) return;
-        PreparedStatement statement = database.getConnection().prepareStatement("INSERT INTO player_bank(playerUUID,balance) VALUES (?,?)");
+        PreparedStatement statement = plugin.getDatabase().getConnection().prepareStatement("INSERT INTO player_bank(playerUUID,balance) VALUES (?,?)");
         statement.setString(1, playerUUID);
         statement.setInt(2, 0);
         statement.executeUpdate();
@@ -70,7 +70,7 @@ public class PlayerBank {
         Integer currentBalance = findPlayerBalance(playerUUID);
         Integer newBalance = currentBalance + amount;
 
-        PreparedStatement statement = database.getConnection().prepareStatement("UPDATE player_bank SET balance = ? WHERE playerUUID = ?");
+        PreparedStatement statement = plugin.getDatabase().getConnection().prepareStatement("UPDATE player_bank SET balance = ? WHERE playerUUID = ?");
         statement.setInt(1, newBalance);
         statement.setString(2, playerUUID);
 
