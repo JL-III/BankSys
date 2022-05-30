@@ -5,5 +5,5 @@ api-version: 1.18
 depend: [Vault]
 commands:
   bank:
-    description: deposits money into bank
-    usage: /bank <subcommand> <amount>
+    description: transfers money from subserver(s) to main server
+    usage: /bank transfer

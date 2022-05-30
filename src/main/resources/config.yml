@@ -4,7 +4,6 @@ URL: ''
 USER: ''
 PASSWORD: ''
 
-#future settings
-#minimum_withdrawal: 1000
-#maximum_withdrawal: 1000000
-
+# If this is the main server, money in the bank will be automatically withdrawn.
+# Otherwise, money in the economy will automatically be deposited
+is-main-server: true
