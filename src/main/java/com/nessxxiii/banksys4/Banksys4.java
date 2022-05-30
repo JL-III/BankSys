@@ -4,6 +4,7 @@ import com.nessxxiii.banksys4.commands.BankCommands;
 import com.nessxxiii.banksys4.db.Database;
 import com.nessxxiii.banksys4.db.PlayerBank;
 import com.nessxxiii.banksys4.db.PlayersActiveToday;
+import com.nessxxiii.banksys4.listeners.ActivePlayersListener;
 import com.nessxxiii.banksys4.services.BalanceTransfer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -45,6 +46,8 @@ public final class Banksys4 extends JavaPlugin {
             ex.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
+
+        this.getServer().getPluginManager().registerEvents(new ActivePlayersListener(this), this);
 
         balanceTransfer = new BalanceTransfer(this);
         balanceTransfer.schedule();
