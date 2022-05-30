@@ -5,8 +5,11 @@ import com.nessxxiii.banksys4.db.PlayerBank;
 import com.nessxxiii.banksys4.models.TransactionLog;
 import com.nessxxiii.banksys4.models.TransactionStatus;
 import com.nessxxiii.banksys4.models.TransactionType;
+import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import java.util.UUID;
@@ -43,6 +46,18 @@ public class ATM {
         Double oldEssentialsBal;
         Double newEssentialsBal;
 
+        //check if player has a balance on the Main server before continuing to attempt to affect the database balance
+        try {
+            oldEssentialsBal = economy.getBalance(player);
+            newEssentialsBal = economy.getBalance(player);
+
+        } catch (Exception ex){
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "" + name + " balance does not have an account that exists on the Main Server");
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Bank will attempt to transfer again tomorrow");
+            return;
+        }
+
+
         try {
             // Fetch bank balance
             bank.createPlayerBalanceIfNotExists(UUID);
@@ -66,9 +81,7 @@ public class ATM {
         }
 
         // Add amount to players balance
-        oldEssentialsBal = economy.getBalance(player);
         EconomyResponse response = economy.depositPlayer(player, amount);
-        newEssentialsBal = economy.getBalance(player);
 
         if (response.transactionSuccess()) {
             // Transaction successful

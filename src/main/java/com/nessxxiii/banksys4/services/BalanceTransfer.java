@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -70,8 +71,14 @@ public class BalanceTransfer {
         }
 
         for (PlayerBalance pb : balances) {
-            OfflinePlayer p = Bukkit.getOfflinePlayer(UUID.fromString(pb.getUuid()));
-            atm.withdraw(p, pb.getBalance());
+            OfflinePlayer p;
+            try {
+                p = Bukkit.getOfflinePlayer(UUID.fromString(pb.getUuid()));
+                atm.withdraw(p, pb.getBalance());
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
+
         }
 
     }
