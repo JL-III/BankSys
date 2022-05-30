@@ -1,7 +1,6 @@
 package com.nessxxiii.banksys4.services;
 
 import com.nessxxiii.banksys4.Banksys4;
-import com.nessxxiii.banksys4.services.ATM;
 import com.nessxxiii.banksys4.db.PlayerBank;
 import com.nessxxiii.banksys4.db.PlayersActiveToday;
 import com.nessxxiii.banksys4.models.PlayerBalance;
