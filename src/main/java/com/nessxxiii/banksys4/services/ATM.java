@@ -52,7 +52,7 @@ public class ATM {
             newEssentialsBal = economy.getBalance(player);
 
         } catch (Exception ex){
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "" + name + " balance does not have an account that exists on the Main Server");
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Found bank balance that belongs to a player that does not have an account on the Main Server");
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Bank will attempt to transfer again tomorrow");
             return;
         }
