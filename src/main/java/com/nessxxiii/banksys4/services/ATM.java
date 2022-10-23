@@ -5,7 +5,6 @@ import com.nessxxiii.banksys4.db.PlayerBank;
 import com.nessxxiii.banksys4.models.TransactionLog;
 import com.nessxxiii.banksys4.models.TransactionStatus;
 import com.nessxxiii.banksys4.models.TransactionType;
-import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -23,7 +22,8 @@ public class ATM {
         this.economy = plugin.getEconomy();
     }
 
-    public Integer getBalance(Player player) {
+    //For internal usage
+    public Integer getBankBalance(Player player) {
         UUID playerUUID = player.getUniqueId();
         String UUID = playerUUID.toString();
 
@@ -35,8 +35,23 @@ public class ATM {
             return -1;
         }
     }
+    //Used for the balance command
+    public String inquireBankBalance(OfflinePlayer player) {
+        UUID playerUUID = player.getUniqueId();
+        String UUID = playerUUID.toString();
+        try {
+            if (bank.findPlayerBalance(UUID) != null) {
+                return bank.findPlayerBalance(UUID).toString();
+            } else {
+                throw new Exception("No player found");
+            }
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage("BankSys: "+ e.getMessage());
+            return "No bank balance exists.";
+        }
+    }
 
-    public void withdraw(OfflinePlayer player, int amount) {
+    public void withdrawFromBank(OfflinePlayer player, int amount) {
         String name = player.getName();
         UUID playerUUID = player.getUniqueId();
         String UUID = playerUUID.toString();
@@ -53,7 +68,7 @@ public class ATM {
 
         } catch (Exception ex){
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Found bank balance that belongs to a player that does not have an account on the Main Server");
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Bank will attempt to transfer again tomorrow");
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Bank will attempt to transfer this players balance again tomorrow");
             return;
         }
 
@@ -104,7 +119,7 @@ public class ATM {
         }
     }
 
-    public void deposit(OfflinePlayer player, int amount) {
+    public void depositToBank(OfflinePlayer player, int amount) {
         String name = player.getName();
         UUID playerUUID = player.getUniqueId();
         String UUID = playerUUID.toString();
@@ -112,7 +127,7 @@ public class ATM {
         Integer oldBankBal = null;
         Integer newBankBal = null;
         Double oldEssentialsBal = economy.getBalance(player);
-        Double newEssentialsBal = null;
+        Double newEssentialsBal;
 
         // Validate that player has sufficient funds
         if (amount > oldEssentialsBal) {

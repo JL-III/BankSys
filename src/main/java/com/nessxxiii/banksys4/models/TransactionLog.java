@@ -1,8 +1,10 @@
 package com.nessxxiii.banksys4.models;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+@Getter
 public class TransactionLog {
     private final String playerName;
     private final Integer amount;
@@ -76,38 +78,6 @@ public class TransactionLog {
 
         printTransactionStatus(this.transactionStatus);
         printToConsole(DIVIDER);
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public Integer getAmount() {
-        return amount;
-    }
-
-    public TransactionStatus getTransactionStatus() {
-        return transactionStatus;
-    }
-
-    public TransactionType getTransactionType() {
-        return transactionType;
-    }
-
-    public Integer getOldBankBal() {
-        return oldBankBal;
-    }
-
-    public Integer getNewBankBal() {
-        return newBankBal;
-    }
-
-    public Integer getOldEssentialsBal() {
-        return oldEssentialsBal;
-    }
-
-    public Integer getNewEssentialsBal() {
-        return newEssentialsBal;
     }
 
     public void setOldBankBal(Integer oldBankBal) {

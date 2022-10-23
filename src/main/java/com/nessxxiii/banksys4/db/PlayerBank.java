@@ -2,6 +2,7 @@ package com.nessxxiii.banksys4.db;
 
 import com.nessxxiii.banksys4.Banksys4;
 import com.nessxxiii.banksys4.models.PlayerBalance;
+import com.nessxxiii.banksys4.models.TransactionLog;
 import org.bukkit.Bukkit;
 
 import java.sql.PreparedStatement;
@@ -28,12 +29,12 @@ public class PlayerBank {
         List<PlayerBalance> result = new ArrayList<>();
 
         PreparedStatement statement = plugin.getDatabase().getConnection().prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
-        ResultSet rs = statement.executeQuery();
+        ResultSet resultSet = statement.executeQuery();
 
-        while (rs.next()) {
+        while (resultSet.next()) {
             PlayerBalance balance = new PlayerBalance();
-            balance.setUuid(rs.getString("playerUUID"));
-            balance.setBalance(rs.getInt("balance"));
+            balance.setUuid(resultSet.getString("playerUUID"));
+            balance.setBalance(resultSet.getInt("balance"));
             result.add(balance);
         }
 

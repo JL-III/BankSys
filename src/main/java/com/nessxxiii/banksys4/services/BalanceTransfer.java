@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -70,11 +69,11 @@ public class BalanceTransfer {
             return;
         }
 
-        for (PlayerBalance pb : balances) {
-            OfflinePlayer p;
+        for (PlayerBalance playerBalance : balances) {
+            OfflinePlayer offlinePlayer;
             try {
-                p = Bukkit.getOfflinePlayer(UUID.fromString(pb.getUuid()));
-                atm.withdraw(p, pb.getBalance());
+                offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerBalance.getUuid()));
+                atm.withdrawFromBank(offlinePlayer, playerBalance.getBalance());
             } catch (Exception ex){
                 ex.printStackTrace();
             }
@@ -94,10 +93,10 @@ public class BalanceTransfer {
         }
 
         for (String uuid : uuids) {
-            OfflinePlayer p = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-            double balance = plugin.getEconomy().getBalance(p);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+            double balance = plugin.getEconomy().getBalance(offlinePlayer);
             if (balance > 1) {
-                atm.deposit(p, (int) balance);
+                atm.depositToBank(offlinePlayer, (int) balance);
             }
         }
 

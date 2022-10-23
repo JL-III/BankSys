@@ -21,10 +21,6 @@ public final class Banksys4 extends JavaPlugin {
     private Database database;
     private BalanceTransfer balanceTransfer;
 
-    public static Banksys4 getPlugin() {
-        return plugin;
-    }
-
     @Override
     public void onEnable() {
         getConfig().options().copyDefaults();
@@ -73,13 +69,13 @@ public final class Banksys4 extends JavaPlugin {
             return false;
         }
 
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> registeredServiceProvider = getServer().getServicesManager().getRegistration(Economy.class);
 
-        if (rsp == null) {
+        if (registeredServiceProvider == null) {
             return false;
         }
 
-        econ = rsp.getProvider();
+        econ = registeredServiceProvider.getProvider();
         return true;
     }
 

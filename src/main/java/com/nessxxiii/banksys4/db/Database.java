@@ -25,6 +25,7 @@ public class Database {
 
 
         connection = DriverManager.getConnection(url, user, password);
+        Bukkit.getServer().getConsoleSender().sendMessage("Banksys:");
         Bukkit.getServer().getConsoleSender().sendMessage("Initialized Connection");
         return connection;
     }
