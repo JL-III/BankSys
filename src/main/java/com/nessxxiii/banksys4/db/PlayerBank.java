@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerBank {
+
     private final Banksys4 plugin;
 
     public PlayerBank(Banksys4 plugin) {
@@ -21,7 +22,7 @@ public class PlayerBank {
 
     public void initialize() throws SQLException {
         Statement statement = plugin.getDatabase().getConnection().createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key,balance INT(30))");
+        statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key, balance INT(30), playerName varchar(25))");
         statement.close();
     }
 
