@@ -1,7 +1,7 @@
 package com.nessxxiii.banksys4.services;
 
 import com.nessxxiii.banksys4.Banksys4;
-import com.nessxxiii.banksys4.db.PlayerBank;
+import com.nessxxiii.banksys4.db.Bank;
 import com.nessxxiii.banksys4.models.TransactionLog;
 import com.nessxxiii.banksys4.models.TransactionStatus;
 import com.nessxxiii.banksys4.models.TransactionType;
@@ -14,11 +14,11 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class ATM {
-    private final PlayerBank bank;
+    private final Bank bank;
     private final Economy economy;
 
     public ATM(Banksys4 plugin) {
-        this.bank = new PlayerBank(plugin);
+        this.bank = new Bank(plugin);
         this.economy = plugin.getEconomy();
     }
 

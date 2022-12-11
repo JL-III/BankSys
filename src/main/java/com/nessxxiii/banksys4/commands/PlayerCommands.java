@@ -4,18 +4,17 @@ import com.nessxxiii.banksys4.Banksys4;
 import com.nessxxiii.banksys4.services.ATM;
 //import com.nessxxiii.banksys4.services.BalanceTransfer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class BankCommands implements CommandExecutor {
+public class PlayerCommands implements CommandExecutor {
 //    private final BalanceTransfer balanceTransfer;
     private final Banksys4 plugin;
 
-    public BankCommands(Banksys4 plugin) {
+    public PlayerCommands(Banksys4 plugin) {
 //        this.balanceTransfer = new BalanceTransfer(plugin);
         this.plugin = plugin;
     }
@@ -45,6 +44,24 @@ public class BankCommands implements CommandExecutor {
             if ("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) {
                 ATM atm = new ATM(plugin);
                 player.sendMessage(atm.inquireBankBalance(Bukkit.getOfflinePlayer(player.getUniqueId())));
+                return true;
+            }
+        }
+
+        if (player.hasPermission("theatria.bank.deposit")) {
+            if (args[0].equalsIgnoreCase("deposit") && args.length == 2) {
+                player.sendMessage("Sent request to deposit --- dummy message need to implement.");
+//                ATM atm = new ATM(plugin);
+//                player.sendMessage(atm.inquireBankBalance(Bukkit.getOfflinePlayer(player.getUniqueId())));
+                return true;
+            }
+        }
+
+        if (player.hasPermission("theatria.bank.withdraw")) {
+            if (args[0].equalsIgnoreCase("withdraw") && args.length == 2) {
+                player.sendMessage("Sent request to withdraw --- dummy message need to implement.");
+//                ATM atm = new ATM(plugin);
+//                player.sendMessage(atm.inquireBankBalance(Bukkit.getOfflinePlayer(player.getUniqueId())));
                 return true;
             }
         }

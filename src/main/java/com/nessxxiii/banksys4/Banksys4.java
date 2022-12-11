@@ -1,8 +1,8 @@
 package com.nessxxiii.banksys4;
 
-import com.nessxxiii.banksys4.commands.BankCommands;
+import com.nessxxiii.banksys4.commands.PlayerCommands;
 import com.nessxxiii.banksys4.db.Database;
-import com.nessxxiii.banksys4.db.PlayerBank;
+import com.nessxxiii.banksys4.db.Bank;
 //import com.nessxxiii.banksys4.db.PlayersActiveToday;
 //import com.nessxxiii.banksys4.listeners.ActivePlayersListener;
 //import com.nessxxiii.banksys4.services.BalanceTransfer;
@@ -32,11 +32,11 @@ public final class Banksys4 extends JavaPlugin {
         }
 
         plugin = this;
-        Objects.requireNonNull(getCommand("bank")).setExecutor(new BankCommands(this));
+        Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(this));
 
         try {
             this.database = new Database(this);
-            new PlayerBank(this).initialize();
+            new Bank(this).initialize();
 //            new PlayersActiveToday(this).initialize();
         } catch (SQLException ex) {
             ex.printStackTrace();

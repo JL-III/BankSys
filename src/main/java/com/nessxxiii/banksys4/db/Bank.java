@@ -2,7 +2,6 @@ package com.nessxxiii.banksys4.db;
 
 import com.nessxxiii.banksys4.Banksys4;
 import com.nessxxiii.banksys4.models.PlayerBalance;
-import com.nessxxiii.banksys4.models.TransactionLog;
 import org.bukkit.Bukkit;
 
 import java.sql.PreparedStatement;
@@ -12,11 +11,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerBank {
+public class Bank {
 
     private final Banksys4 plugin;
 
-    public PlayerBank(Banksys4 plugin) {
+    public Bank(Banksys4 plugin) {
         this.plugin = plugin;
     }
 
