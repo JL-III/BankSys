@@ -22,13 +22,12 @@ public class PlayerBank {
 
     public void initialize() throws SQLException {
         Statement statement = plugin.getDatabase().getConnection().createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key, balance INT(30), playerName varchar(25))");
+        statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key, balance INT(30)");
         statement.close();
     }
 
     public List<PlayerBalance> getBalances() throws SQLException {
         List<PlayerBalance> result = new ArrayList<>();
-
         PreparedStatement statement = plugin.getDatabase().getConnection().prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
         ResultSet resultSet = statement.executeQuery();
 

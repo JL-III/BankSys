@@ -3,9 +3,9 @@ package com.nessxxiii.banksys4;
 import com.nessxxiii.banksys4.commands.BankCommands;
 import com.nessxxiii.banksys4.db.Database;
 import com.nessxxiii.banksys4.db.PlayerBank;
-import com.nessxxiii.banksys4.db.PlayersActiveToday;
-import com.nessxxiii.banksys4.listeners.ActivePlayersListener;
-import com.nessxxiii.banksys4.services.BalanceTransfer;
+//import com.nessxxiii.banksys4.db.PlayersActiveToday;
+//import com.nessxxiii.banksys4.listeners.ActivePlayersListener;
+//import com.nessxxiii.banksys4.services.BalanceTransfer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,7 +19,7 @@ public final class Banksys4 extends JavaPlugin {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
     private Database database;
-    private BalanceTransfer balanceTransfer;
+//    private BalanceTransfer balanceTransfer;
 
     @Override
     public void onEnable() {
@@ -37,16 +37,15 @@ public final class Banksys4 extends JavaPlugin {
         try {
             this.database = new Database(this);
             new PlayerBank(this).initialize();
-            new PlayersActiveToday(this).initialize();
+//            new PlayersActiveToday(this).initialize();
         } catch (SQLException ex) {
             ex.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
 
-        this.getServer().getPluginManager().registerEvents(new ActivePlayersListener(this), this);
-
-        balanceTransfer = new BalanceTransfer(this);
-        balanceTransfer.schedule();
+//        this.getServer().getPluginManager().registerEvents(new ActivePlayersListener(this), this);
+//        balanceTransfer = new BalanceTransfer(this);
+//        balanceTransfer.schedule();
     }
 
     @Override
@@ -59,9 +58,9 @@ public final class Banksys4 extends JavaPlugin {
             e.printStackTrace();
         }
 
-        if (this.balanceTransfer != null) {
-            this.balanceTransfer.shutdown();
-        }
+//        if (this.balanceTransfer != null) {
+//            this.balanceTransfer.shutdown();
+//        }
     }
 
     private boolean setupEconomy() {
