@@ -1,5 +1,6 @@
 package com.nessxxiii.banksys.managers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 public class ConfigManager {
@@ -26,5 +27,13 @@ public class ConfigManager {
 
     public String getPASSWORD() {
         return PASSWORD;
+    }
+
+    public boolean databaseConnectionValuesAreSet() {
+        if (getURL().length() > 0 && getUSER().length() > 0 && getPASSWORD().length() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

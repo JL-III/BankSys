@@ -10,11 +10,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerCommands implements CommandExecutor {
-//    private final BalanceTransfer balanceTransfer;
     private final BankSys plugin;
 
     public PlayerCommands(BankSys plugin) {
-//        this.balanceTransfer = new BalanceTransfer(plugin);
         this.plugin = plugin;
     }
 
@@ -23,14 +21,7 @@ public class PlayerCommands implements CommandExecutor {
         // Player validation
         if (!(sender instanceof Player player)) return false;
         if (args.length < 1) return false;
-        // Permission validation
-//        if (player.hasPermission("theatria.bank.transfer")) {
-//            if ("transfer".equalsIgnoreCase(args[0])) {
-//                balanceTransfer.run();
-//                player.sendMessage(ChatColor.GREEN + "Balance transfer is running.");
-//                return true;
-//            }
-//        }
+
         if (player.hasPermission("theatria.bank.bal.other")) {
             if (("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) && args.length == 2) {
                 TransactionManager transactionManager = new TransactionManager(plugin);

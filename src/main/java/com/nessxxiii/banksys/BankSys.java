@@ -5,6 +5,8 @@ import com.nessxxiii.banksys.db.Database;
 import com.nessxxiii.banksys.db.Bank;
 import com.nessxxiii.banksys.managers.ConfigManager;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,7 +15,6 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class BankSys extends JavaPlugin {
-    private static BankSys plugin;
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
     private Database database;
@@ -25,23 +26,23 @@ public final class BankSys extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         this.configManager = new ConfigManager(this);
-        if (!setupEconomy()) {
-            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+        if (configManager.databaseConnectionValuesAreSet()) {
+            if (!setupEconomy()) {
+                log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+            Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(this));
+            try {
+                this.database = new Database(configManager);
+                new Bank(this).initialize();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                getServer().getPluginManager().disablePlugin(this);
+            }
+        } else {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Database connection values are not set, this plugin will not do anything until they are set.");
         }
-
-        plugin = this;
-        Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(this));
-
-        try {
-            this.database = new Database(configManager);
-            new Bank(this).initialize();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            getServer().getPluginManager().disablePlugin(this);
-        }
-
     }
 
     @Override
