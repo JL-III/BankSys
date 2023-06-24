@@ -7,3 +7,9 @@ PASSWORD: ''
 # If this is the main server, money in the bank will be automatically withdrawn.
 # Otherwise, money in the economy will automatically be deposited
 is-main-server: true
+
+# Cooldown between bank interactions per second.
+cooldown: 30
+
+# Minimum amount for each transaction.
+minimum-amount: 10000
