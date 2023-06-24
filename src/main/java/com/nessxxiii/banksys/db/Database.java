@@ -1,11 +1,9 @@
-package com.nessxxiii.banksys4.db;
+package com.nessxxiii.banksys.db;
 
-import com.nessxxiii.banksys4.Banksys4;
-import com.nessxxiii.banksys4.managers.ConfigManager;
+import com.nessxxiii.banksys.managers.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.io.ObjectInputFilter;
 import java.sql.*;
 
 public class Database {

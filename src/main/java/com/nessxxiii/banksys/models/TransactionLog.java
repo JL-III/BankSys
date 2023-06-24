@@ -1,7 +1,7 @@
-package com.nessxxiii.banksys4.models;
+package com.nessxxiii.banksys.models;
 
-import com.nessxxiii.banksys4.enums.TransactionStatus;
-import com.nessxxiii.banksys4.enums.TransactionType;
+import com.nessxxiii.banksys.enums.TransactionStatus;
+import com.nessxxiii.banksys.enums.TransactionType;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

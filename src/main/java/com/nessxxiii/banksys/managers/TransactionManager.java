@@ -1,10 +1,10 @@
-package com.nessxxiii.banksys4.managers;
+package com.nessxxiii.banksys.managers;
 
-import com.nessxxiii.banksys4.Banksys4;
-import com.nessxxiii.banksys4.db.Bank;
-import com.nessxxiii.banksys4.models.TransactionLog;
-import com.nessxxiii.banksys4.enums.TransactionStatus;
-import com.nessxxiii.banksys4.enums.TransactionType;
+import com.nessxxiii.banksys.BankSys;
+import com.nessxxiii.banksys.db.Bank;
+import com.nessxxiii.banksys.models.TransactionLog;
+import com.nessxxiii.banksys.enums.TransactionStatus;
+import com.nessxxiii.banksys.enums.TransactionType;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -17,7 +17,7 @@ public class TransactionManager {
     private final Bank bank;
     private final Economy economy;
 
-    public TransactionManager(Banksys4 plugin) {
+    public TransactionManager(BankSys plugin) {
         this.bank = new Bank(plugin);
         this.economy = plugin.getEconomy();
     }

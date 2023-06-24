@@ -1,7 +1,7 @@
-package com.nessxxiii.banksys4.commands;
+package com.nessxxiii.banksys.commands;
 
-import com.nessxxiii.banksys4.Banksys4;
-import com.nessxxiii.banksys4.managers.TransactionManager;
+import com.nessxxiii.banksys.BankSys;
+import com.nessxxiii.banksys.managers.TransactionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class PlayerCommands implements CommandExecutor {
 //    private final BalanceTransfer balanceTransfer;
-    private final Banksys4 plugin;
+    private final BankSys plugin;
 
-    public PlayerCommands(Banksys4 plugin) {
+    public PlayerCommands(BankSys plugin) {
 //        this.balanceTransfer = new BalanceTransfer(plugin);
         this.plugin = plugin;
     }

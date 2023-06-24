@@ -1,20 +1,19 @@
-package com.nessxxiii.banksys4;
+package com.nessxxiii.banksys;
 
-import com.nessxxiii.banksys4.commands.PlayerCommands;
-import com.nessxxiii.banksys4.db.Database;
-import com.nessxxiii.banksys4.db.Bank;
-import com.nessxxiii.banksys4.managers.ConfigManager;
+import com.nessxxiii.banksys.commands.PlayerCommands;
+import com.nessxxiii.banksys.db.Database;
+import com.nessxxiii.banksys.db.Bank;
+import com.nessxxiii.banksys.managers.ConfigManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.units.qual.C;
 
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-public final class Banksys4 extends JavaPlugin {
-    private static Banksys4 plugin;
+public final class BankSys extends JavaPlugin {
+    private static BankSys plugin;
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
     private Database database;

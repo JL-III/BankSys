@@ -1,4 +1,4 @@
-package com.nessxxiii.banksys4.managers;
+package com.nessxxiii.banksys.managers;
 
 import org.bukkit.plugin.Plugin;
 

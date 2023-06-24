@@ -1,7 +1,7 @@
-name: Banksys4
+name: BankSys
 version: '${project.version}'
 authors: [NessXXIII, bfrisco]
-main: com.nessxxiii.banksys4.Banksys4
+main: com.nessxxiii.banksys.BankSys
 api-version: 1.19
 depend: [Vault]
 commands:
