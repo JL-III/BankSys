@@ -1,8 +1,7 @@
 package com.nessxxiii.banksys4.commands;
 
 import com.nessxxiii.banksys4.Banksys4;
-import com.nessxxiii.banksys4.services.ATM;
-//import com.nessxxiii.banksys4.services.BalanceTransfer;
+import com.nessxxiii.banksys4.managers.TransactionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -34,16 +33,16 @@ public class PlayerCommands implements CommandExecutor {
 //        }
         if (player.hasPermission("theatria.bank.bal.other")) {
             if (("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) && args.length == 2) {
-                ATM atm = new ATM(plugin);
-                player.sendMessage(atm.inquireBankBalance(Bukkit.getOfflinePlayer(args[1])));
+                TransactionManager transactionManager = new TransactionManager(plugin);
+                player.sendMessage(transactionManager.inquireBankBalance(Bukkit.getOfflinePlayer(args[1])));
                 return true;
             }
         }
 
         if (player.hasPermission("theatria.bank.bal.self")) {
             if ("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) {
-                ATM atm = new ATM(plugin);
-                player.sendMessage(atm.inquireBankBalance(Bukkit.getOfflinePlayer(player.getUniqueId())));
+                TransactionManager transactionManager = new TransactionManager(plugin);
+                player.sendMessage(transactionManager.inquireBankBalance(Bukkit.getOfflinePlayer(player.getUniqueId())));
                 return true;
             }
         }
