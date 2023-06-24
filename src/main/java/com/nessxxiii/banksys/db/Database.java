@@ -1,6 +1,7 @@
 package com.nessxxiii.banksys.db;
 
 import com.nessxxiii.banksys.managers.ConfigManager;
+import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -9,10 +10,12 @@ import java.sql.*;
 public class Database {
 
     private ConfigManager configManager;
+    private CustomLogger customLogger;
     private Connection connection;
 
-    public Database(ConfigManager configManager) {
+    public Database(ConfigManager configManager, CustomLogger customLogger) {
         this.configManager = configManager;
+        this.customLogger = customLogger;
     }
 
     public Connection getConnection() throws SQLException {
@@ -21,7 +24,7 @@ public class Database {
         }
 
         connection = DriverManager.getConnection(configManager.getURL(), configManager.getUSER(), configManager.getPASSWORD());
-        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "BankSys: Initialized Connection");
+        customLogger.sendLog("Initialized Connection.");
         return connection;
     }
 }
