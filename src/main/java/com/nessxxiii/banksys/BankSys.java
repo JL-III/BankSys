@@ -43,20 +43,20 @@ public final class BankSys extends JavaPlugin {
                 getServer().getPluginManager().disablePlugin(this);
             }
         } else {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Database connection values are not set, this plugin will not do anything until they are set.");
+            log.sendLog(ChatColor.YELLOW + "Database connection values are not set, this plugin will not do anything until they are set.");
         }
     }
 
     @Override
     public void onDisable() {
         log.sendLog(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
-
-        try {
-            this.database.getConnection().close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (this.database != null) {
+            try {
+                this.database.getConnection().close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private boolean setupEconomy() {
