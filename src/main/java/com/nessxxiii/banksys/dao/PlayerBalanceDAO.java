@@ -84,9 +84,9 @@ public class PlayerBalanceDAO {
     }
 
 
-    public void updatePlayerBalance(UUID playerUUID, int amount) throws SQLException {
+    public int updatePlayerBalance(UUID playerUUID, int amount) throws SQLException {
         Optional<Integer> currentBalance = findPlayerBalance(playerUUID);
-        Integer newBalance;
+        int newBalance;
         if (currentBalance.isPresent()) {
             newBalance = currentBalance.get() + amount;
             try (PreparedStatement preparedStatement = dbConnectionManager.getConnection().prepareStatement("UPDATE player_bank SET balance = ? WHERE playerUUID = ?")) {
@@ -94,7 +94,12 @@ public class PlayerBalanceDAO {
                 preparedStatement.setString(2, playerUUID.toString());
                 preparedStatement.executeUpdate();
             }
-        }
+            Optional<Integer> updatedBalance = findPlayerBalance(playerUUID);
+            if (updatedBalance.isPresent()) {
+                return updatedBalance.get();
+            }
 
+        }
+        throw new SQLException("There was an issue updating the player balance.");
     }
 }
