@@ -2,11 +2,9 @@ package com.nessxxiii.banksys.data;
 
 import com.nessxxiii.banksys.enums.TransactionStatus;
 import com.nessxxiii.banksys.enums.TransactionType;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-@Getter
 public class TransactionLog {
     private final String playerName;
     private final Integer amount;

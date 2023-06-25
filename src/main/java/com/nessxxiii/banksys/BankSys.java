@@ -2,9 +2,9 @@ package com.nessxxiii.banksys;
 
 import com.nessxxiii.banksys.commands.PlayerCommands;
 import com.nessxxiii.banksys.db.DBConnectionManager;
-import com.nessxxiii.banksys.db.PlayerBalanceDAO;
+import com.nessxxiii.banksys.dao.PlayerBalanceDAO;
 import com.nessxxiii.banksys.managers.ConfigManager;
-import com.nessxxiii.banksys.managers.TransactionManager;
+import com.nessxxiii.banksys.service.TransactionService;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
@@ -19,8 +19,10 @@ public final class BankSys extends JavaPlugin {
     private static Economy economy = null;
     private DBConnectionManager dBConnectionManager;
     private PlayerBalanceDAO playerBalanceDAO;
-    private TransactionManager transactionManager;
+    private TransactionService transactionService;
     private ConfigManager configManager;
+
+    private PlayerCommands playerCommands;
 
     @Override
     public void onEnable() {
@@ -34,13 +36,14 @@ public final class BankSys extends JavaPlugin {
                 return;
             }
             try {
-                this.dBConnectionManager = new DBConnectionManager(configManager);
-                this.playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
-                this.playerBalanceDAO.initializeDatabase();
-                this.transactionManager = new TransactionManager(economy, playerBalanceDAO, customLogger);
-                Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(transactionManager, configManager));
+                dBConnectionManager = new DBConnectionManager(configManager);
+                playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
+                playerBalanceDAO.initializeDatabase();
+                transactionService = new TransactionService(economy, playerBalanceDAO, customLogger);
+                playerCommands = new PlayerCommands(transactionService, configManager, customLogger);
+                Objects.requireNonNull(getCommand("bank")).setExecutor(playerCommands);
                 customLogger.sendLog("Successfully initialized!");
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 getServer().getPluginManager().disablePlugin(this);
             }
@@ -74,6 +77,12 @@ public final class BankSys extends JavaPlugin {
 
         economy = registeredServiceProvider.getProvider();
         return true;
+    }
+
+    public void reloadConfigManager() {
+        configManager = new ConfigManager(this);
+        playerCommands.reloadConfigManager(configManager);
+        customLogger.sendLog("Reloaded command config.\nRestart the server to reload the database configuration.");
     }
 
 }

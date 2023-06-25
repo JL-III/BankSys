@@ -1,8 +1,9 @@
-package com.nessxxiii.banksys.managers;
+package com.nessxxiii.banksys.service;
 
-import com.nessxxiii.banksys.db.PlayerBalanceDAO;
+import com.nessxxiii.banksys.dao.PlayerBalanceDAO;
 import com.nessxxiii.banksys.enums.TransactionStatus;
 import com.nessxxiii.banksys.enums.TransactionType;
+import com.nessxxiii.banksys.exceptions.DatabaseOperationException;
 import com.nessxxiii.banksys.util.TransactionLogger;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.milkbowl.vault.economy.Economy;
@@ -15,15 +16,13 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
-public class TransactionManager {
+public class TransactionService {
     private final PlayerBalanceDAO playerBalanceDAO;
     private final Economy economy;
-
     private final CustomLogger customLogger;
-
     private final TransactionLogger transactionLogger = new TransactionLogger();
 
-    public TransactionManager(Economy economy, PlayerBalanceDAO playerBalanceDAO, CustomLogger customLogger) {
+    public TransactionService(Economy economy, PlayerBalanceDAO playerBalanceDAO, CustomLogger customLogger) {
         this.economy = economy;
         this.playerBalanceDAO = playerBalanceDAO;
         this.customLogger = customLogger;
@@ -35,56 +34,49 @@ public class TransactionManager {
 
         try {
             playerBalanceDAO.createPlayerBalanceIfNotExists(playerUUID);
-            return playerBalanceDAO.findPlayerBalance(playerUUID).get();
+            return playerBalanceDAO.findPlayerBalance(playerUUID).orElseThrow();
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
     }
     //Used for the balance command
-    public String inquireBankBalance(OfflinePlayer player) {
-        UUID playerUUID = player.getUniqueId();
+    public String inquiry(UUID playerUUID) {
         try {
             if (playerBalanceDAO.findPlayerBalance(playerUUID).isPresent()) {
                 return playerBalanceDAO.findPlayerBalance(playerUUID).get().toString();
             } else {
-                throw new Exception("No player found");
+                throw new DatabaseOperationException("No player found");
             }
-        } catch (Exception e) {
+        } catch (SQLException | DatabaseOperationException e) {
             Bukkit.getConsoleSender().sendMessage("BankSys: "+ e.getMessage());
             return "No bank balance exists.";
         }
     }
 
-    public void withdrawFromBank(OfflinePlayer player, int amount) {
-        String name = player.getName();
+    public void withdraw(OfflinePlayer player, String arg) {
         UUID playerUUID = player.getUniqueId();
-
+        Integer amount;
         Integer oldBankBal;
         Integer newBankBal;
         double oldEssentialsBal;
-        double newEssentialsBal;
 
-        //check if player has a balance on the Main server before continuing to attempt to affect the database balance
         try {
             oldEssentialsBal = economy.getBalance(player);
-            newEssentialsBal = economy.getBalance(player);
-
-        } catch (Exception ex){
-            customLogger.sendLog("Found bank balance that belongs to a player that does not have an account on the Main Server");
-            customLogger.sendLog("Bank will attempt to transfer this players balance again tomorrow");
+            amount = Integer.parseInt(arg);  // Should catch NumberFormatException specifically here for better error handling.
+        } catch (NumberFormatException ex){
+            customLogger.sendLog("Player did not provide an integer value.");
+            ex.printStackTrace();
             return;
         }
 
-
         try {
-            // Fetch bank balance
             playerBalanceDAO.createPlayerBalanceIfNotExists(playerUUID);
             Optional<Integer> oldBankBalOpt = playerBalanceDAO.findPlayerBalance(playerUUID);
 
             // Validate that player has a balance
-            if (!oldBankBalOpt.isPresent()) {
-                transactionLogger.logTransaction(name, amount, TransactionType.WITHDRAW, TransactionStatus.INSUFFICIENT_FUNDS);
+            if (oldBankBalOpt.isEmpty()) {
+                transactionLogger.logTransaction(playerUUID, amount, TransactionType.WITHDRAW, TransactionStatus.INSUFFICIENT_FUNDS);
                 return;
             }
 
@@ -92,7 +84,7 @@ public class TransactionManager {
 
             // Validate that player has sufficient funds
             if (amount > oldBankBal) {
-                transactionLogger.logTransaction(name, amount, TransactionType.WITHDRAW, TransactionStatus.INSUFFICIENT_FUNDS);
+                transactionLogger.logTransaction(playerUUID, amount, TransactionType.WITHDRAW, TransactionStatus.INSUFFICIENT_FUNDS);
                 return;
             }
 
@@ -101,16 +93,13 @@ public class TransactionManager {
             Optional<Integer> newBankBalOpt = playerBalanceDAO.findPlayerBalance(playerUUID);
 
             // Check if balance updated successfully
-            if (!newBankBalOpt.isPresent()) {
-                // Handle the error appropriately. For example, throw an exception or log an error.
+            if (newBankBalOpt.isEmpty()) {  // Should handle this error with proper exception or error message.
                 return;
             }
 
             newBankBal = newBankBalOpt.get();
-        } catch (Exception ex) {
-            // Database update failed - notify the player and print a log
-            // Neither the players balance nor the database should have changed.
-            transactionLogger.logTransaction(name, amount, TransactionType.WITHDRAW, TransactionStatus.ERROR_E1);
+        } catch (Exception ex) {  // SQLException should be caught here, as it is more specific and will give more information.
+            transactionLogger.logTransaction(playerUUID, amount, TransactionType.WITHDRAW, TransactionStatus.ERROR_E1);
             ex.printStackTrace();
             return;
         }
@@ -120,27 +109,35 @@ public class TransactionManager {
 
         if (response.transactionSuccess()) {
             // Transaction successful
-            transactionLogger.logTransaction(name, amount, oldBankBal, newBankBal, oldEssentialsBal, newEssentialsBal, TransactionType.WITHDRAW, TransactionStatus.SUCCESS);
+            transactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, response.balance, TransactionType.WITHDRAW, TransactionStatus.SUCCESS);
         } else {
             // Transaction failed
             // We withdrew the amount from the players balance, but they never received the money.
             // This will require manual review and a refund.
-            transactionLogger.logTransaction(name, amount, oldBankBal, newBankBal, oldEssentialsBal, newEssentialsBal, TransactionType.WITHDRAW, TransactionStatus.ERROR_E2);
+            transactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, response.balance, TransactionType.WITHDRAW, TransactionStatus.ERROR_E2);
+            // Refund to player's bank account should be initiated here to keep data consistency.
         }
     }
 
-    public void depositToBank(OfflinePlayer player, int amount) {
-        String name = player.getName();
+    public void deposit(OfflinePlayer player, String arg) {
         UUID playerUUID = player.getUniqueId();
 
         Integer oldBankBal = null;
         Integer newBankBal = null;
         double oldEssentialsBal = economy.getBalance(player);
         double newEssentialsBal;
+        Integer amount;
+        try {
+            amount = Integer.parseInt(arg);
+        } catch (NumberFormatException ex) {
+            customLogger.sendLog("Player did not provide an integer value.");
+            ex.printStackTrace();
+            return;
+        }
 
         // Validate that player has sufficient funds
         if (amount > oldEssentialsBal) {
-            transactionLogger.logTransaction(name, amount, TransactionType.DEPOSIT, TransactionStatus.INSUFFICIENT_FUNDS);
+            transactionLogger.logTransaction(playerUUID, amount, TransactionType.DEPOSIT, TransactionStatus.INSUFFICIENT_FUNDS);
             return;
         }
 
@@ -157,12 +154,12 @@ public class TransactionManager {
                 if (oldBankBalOpt.isPresent()) {
                     oldBankBal = oldBankBalOpt.get();
                 } else {
-                    throw new SQLException("Old player balance for player " + name + " was not found!");
+                    throw new SQLException("Old player balance for player " + player.getName() + " was not found!");
                 }
 
                 playerBalanceDAO.updatePlayerBalance(playerUUID, amount);
                 // Transaction was successful
-                transactionLogger.logTransaction(name, amount, oldBankBal, newBankBal, oldEssentialsBal, newEssentialsBal, TransactionType.DEPOSIT, TransactionStatus.SUCCESS);
+                transactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, newEssentialsBal, TransactionType.DEPOSIT, TransactionStatus.SUCCESS);
             } catch (Exception ex) {
                 // Bank transaction failed - send message to player and print a log.
                 // The bank balance should not have been modified.
@@ -170,13 +167,13 @@ public class TransactionManager {
                 economy.depositPlayer(player, amount);
                 newEssentialsBal = economy.getBalance(player);
 
-                transactionLogger.logTransaction(name, amount, oldBankBal, newBankBal, oldEssentialsBal, newEssentialsBal, TransactionType.DEPOSIT, TransactionStatus.ERROR_E3);
+                transactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, newEssentialsBal, TransactionType.DEPOSIT, TransactionStatus.ERROR_E3);
                 ex.printStackTrace();
             }
         } else {
             // Economy transaction failed
             // Neither the players balance nor bank balance should have been modified.
-            transactionLogger.logTransaction(name, amount, oldBankBal, newBankBal, oldEssentialsBal, newEssentialsBal, TransactionType.DEPOSIT, TransactionStatus.ERROR_E4);
+            transactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, newEssentialsBal, TransactionType.DEPOSIT, TransactionStatus.ERROR_E4);
         }
     }
 }
