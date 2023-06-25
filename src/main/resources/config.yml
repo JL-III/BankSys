@@ -1,5 +1,5 @@
 #MYSQL database set up
-#URL is jdbc:msql://URL:port/tablename
+#URL is jdbc:mysql://URL:port/tablename
 URL: ''
 USER: ''
 PASSWORD: ''

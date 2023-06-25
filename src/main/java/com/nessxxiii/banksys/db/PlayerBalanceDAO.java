@@ -1,31 +1,33 @@
 package com.nessxxiii.banksys.db;
 
-import com.nessxxiii.banksys.BankSys;
 import com.nessxxiii.banksys.data.PlayerBalance;
-import org.bukkit.Bukkit;
+import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class PlayerBalanceDAO {
 
-    private final BankSys plugin;
+    private final DBConnectionManager dbConnectionManager;
+    private final CustomLogger customLogger;
 
-    public PlayerBalanceDAO(BankSys plugin) {
-        this.plugin = plugin;
+    public PlayerBalanceDAO(DBConnectionManager dbConnectionManager, CustomLogger cUstomLogger) {
+        this.dbConnectionManager = dbConnectionManager;
+        this.customLogger = cUstomLogger;
     }
 
     public void initialize() throws SQLException {
-        try (Connection connection = plugin.getDBConnectionManager().getConnection();
+        try (Connection connection = dbConnectionManager.getConnection();
              Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key, balance INT(30)");
+            statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key, balance INT(30))");
         }
     }
 
     public List<PlayerBalance> getBalances() throws SQLException {
         List<PlayerBalance> result = new ArrayList<>();
-        PreparedStatement statement = plugin.getDBConnectionManager().getConnection().prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
+        PreparedStatement statement = dbConnectionManager.getConnection().prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
         ResultSet resultSet = statement.executeQuery();
 
         while (resultSet.next()) {
@@ -38,41 +40,45 @@ public class PlayerBalanceDAO {
         return result;
     }
 
-    public Integer findPlayerBalance(String playerUUID) throws SQLException {
-        Integer balance = null;
+    public Optional<Integer> findPlayerBalance(String playerUUID) throws SQLException {
+        Optional<Integer> balance = Optional.empty();
 
-        PreparedStatement statement = plugin.getDBConnectionManager().getConnection().prepareStatement("SELECT balance FROM player_bank WHERE playerUUID = ?");
-        statement.setString(1, playerUUID);
-        ResultSet resultSet = statement.executeQuery();
+        try (Connection connection = dbConnectionManager.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT balance FROM player_bank WHERE playerUUID = ?")) {
 
-        if (resultSet.next()) {
-            balance = resultSet.getInt("balance");
+            preparedStatement.setString(1, playerUUID);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    balance = Optional.of(resultSet.getInt("balance"));
+                }
+            }
         }
-
-        statement.close();
-        resultSet.close();
         return balance;
     }
 
     public void createPlayerBalanceIfNotExists(String playerUUID) throws SQLException {
-        if (findPlayerBalance(playerUUID) != null) return;
-        PreparedStatement statement = plugin.getDBConnectionManager().getConnection().prepareStatement("INSERT INTO player_bank(playerUUID,balance) VALUES (?,?)");
+        if (findPlayerBalance(playerUUID).isPresent()) return;
+        PreparedStatement statement = dbConnectionManager.getConnection().prepareStatement("INSERT INTO player_bank(playerUUID,balance) VALUES (?,?)");
         statement.setString(1, playerUUID);
         statement.setInt(2, 0);
         statement.executeUpdate();
         statement.close();
-        Bukkit.getServer().getConsoleSender().sendMessage("Created entry in BankSys2 for " + playerUUID);
+        customLogger.sendLog("Created entry in BankSys2 for " + playerUUID);
     }
 
     public void updatePlayerBalance(String playerUUID, int amount) throws SQLException {
-        Integer currentBalance = findPlayerBalance(playerUUID);
-        Integer newBalance = currentBalance + amount;
+        Optional<Integer> currentBalance = findPlayerBalance(playerUUID);
+        Integer newBalance;
+        if (currentBalance.isPresent()) {
+            newBalance = currentBalance.get() + amount;
+            try (Connection connection = dbConnectionManager.getConnection();
+                 PreparedStatement preparedStatement = connection.prepareStatement("UPDATE player_bank SET balance = ? WHERE playerUUID = ?")) {
+                preparedStatement.setInt(1, newBalance);
+                preparedStatement.setString(2, playerUUID);
+                preparedStatement.executeUpdate();
+            }
+        }
 
-        PreparedStatement statement = plugin.getDBConnectionManager().getConnection().prepareStatement("UPDATE player_bank SET balance = ? WHERE playerUUID = ?");
-        statement.setInt(1, newBalance);
-        statement.setString(2, playerUUID);
-
-        statement.executeUpdate();
-        statement.close();
     }
 }

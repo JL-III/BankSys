@@ -17,7 +17,7 @@ import java.util.Objects;
 public final class BankSys extends JavaPlugin {
     private final CustomLogger customLogger = new CustomLogger(this.getName(), NamedTextColor.GREEN, NamedTextColor.YELLOW);
     private static Economy economy = null;
-    private DBConnectionManager DBConnectionManager;
+    private DBConnectionManager dBConnectionManager;
 
     private PlayerBalanceDAO playerBalanceDAO;
 
@@ -37,10 +37,10 @@ public final class BankSys extends JavaPlugin {
                 return;
             }
             try {
-                this.DBConnectionManager = new DBConnectionManager(configManager);
-                this.playerBalanceDAO = new PlayerBalanceDAO(this);
+                this.dBConnectionManager = new DBConnectionManager(configManager);
+                this.playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager);
                 this.playerBalanceDAO.initialize();
-                this.transactionManager = new TransactionManager(economy, playerBalanceDAO);
+                this.transactionManager = new TransactionManager(economy, playerBalanceDAO, customLogger);
                 Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(transactionManager));
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -54,9 +54,9 @@ public final class BankSys extends JavaPlugin {
     @Override
     public void onDisable() {
         customLogger.sendLog(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
-        if (this.DBConnectionManager != null) {
+        if (this.dBConnectionManager != null) {
             try {
-                this.DBConnectionManager.getConnection().close();
+                this.dBConnectionManager.getConnection().close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -82,7 +82,7 @@ public final class BankSys extends JavaPlugin {
         return economy;
     }
 
-    public DBConnectionManager getDBConnectionManager() {
-        return DBConnectionManager;
+    public DBConnectionManager getdBConnectionManager() {
+        return dBConnectionManager;
     }
 }
