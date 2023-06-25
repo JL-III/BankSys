@@ -18,11 +18,8 @@ public final class BankSys extends JavaPlugin {
     private final CustomLogger customLogger = new CustomLogger(this.getName(), NamedTextColor.GREEN, NamedTextColor.YELLOW);
     private static Economy economy = null;
     private DBConnectionManager dBConnectionManager;
-
     private PlayerBalanceDAO playerBalanceDAO;
-
     private TransactionManager transactionManager;
-
     private ConfigManager configManager;
 
     @Override
@@ -42,7 +39,7 @@ public final class BankSys extends JavaPlugin {
                 this.playerBalanceDAO.initializeDatabase();
                 this.transactionManager = new TransactionManager(economy, playerBalanceDAO, customLogger);
                 Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(transactionManager, configManager));
-                customLogger.sendLog("Successfully initialized BankSys!");
+                customLogger.sendLog("Successfully initialized!");
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 getServer().getPluginManager().disablePlugin(this);
@@ -79,11 +76,4 @@ public final class BankSys extends JavaPlugin {
         return true;
     }
 
-    public Economy getEconomy() {
-        return economy;
-    }
-
-    public DBConnectionManager getdBConnectionManager() {
-        return dBConnectionManager;
-    }
 }

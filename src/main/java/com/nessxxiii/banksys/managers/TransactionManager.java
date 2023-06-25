@@ -46,7 +46,7 @@ public class TransactionManager {
         UUID playerUUID = player.getUniqueId();
         try {
             if (playerBalanceDAO.findPlayerBalance(playerUUID).isPresent()) {
-                return playerBalanceDAO.findPlayerBalance(playerUUID).toString();
+                return playerBalanceDAO.findPlayerBalance(playerUUID).get().toString();
             } else {
                 throw new Exception("No player found");
             }

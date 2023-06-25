@@ -28,13 +28,20 @@ public class CooldownManager {
         }
     }
 
-    public Duration getNextUse(UUID uuid) {
+    public Long getNextUse(UUID uuid) {
         if (cooldownMap.containsKey(uuid)) {
-            return Duration.between(cooldownMap.get(uuid), Instant.now());
+            Duration timeSinceLastUse = Duration.between(cooldownMap.get(uuid), Instant.now());
+            if (timeSinceLastUse.compareTo(cooldownDuration) < 0) {
+                return cooldownDuration.minus(timeSinceLastUse).toSeconds();
+            } else {
+                // Cooldown has already expired
+                return Duration.ZERO.toSeconds();
+            }
         } else {
-            return null;
+            return 0L;
         }
     }
+
 
     public void updateCooldown(UUID uuid) {
         cooldownMap.put(uuid, Instant.now());

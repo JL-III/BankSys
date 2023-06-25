@@ -28,8 +28,10 @@ public class PlayerCommands implements CommandExecutor {
         if (args.length < 1) return false;
 
         if (!cooldownManager.isCooldownOver(player.getUniqueId())) {
-            player.sendMessage("You must wait " + cooldownManager.getNextUse(player.getUniqueId()) + "to use the bank again!");
+            player.sendMessage("You must wait " + cooldownManager.getNextUse(player.getUniqueId()) + " seconds to use the bank again!");
             return true;
+        } else {
+            cooldownManager.updateCooldown(player.getUniqueId());
         }
 
         if (player.hasPermission("theatria.bank.bal.other")) {
@@ -41,7 +43,7 @@ public class PlayerCommands implements CommandExecutor {
 
         if (player.hasPermission("theatria.bank.bal.self")) {
             if ("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) {
-                player.sendMessage(transactionManager.inquireBankBalance(Bukkit.getOfflinePlayer(player.getUniqueId())));
+                player.sendMessage("Your bank balance is " + transactionManager.inquireBankBalance(Bukkit.getOfflinePlayer(player.getUniqueId())));
                 return true;
             }
         }
