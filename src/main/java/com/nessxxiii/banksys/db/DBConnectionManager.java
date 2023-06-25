@@ -3,6 +3,7 @@ package com.nessxxiii.banksys.db;
 import com.nessxxiii.banksys.managers.ConfigManager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariPoolMXBean;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
@@ -16,6 +17,7 @@ public class DBConnectionManager {
         config.setJdbcUrl(configManager.getURL());
         config.setUsername(configManager.getUSER());
         config.setPassword(configManager.getPASSWORD());
+        config.setRegisterMbeans(true);
         config.setValidationTimeout(TimeUnit.SECONDS.toMillis(5));
         config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(30));
         config.setMaximumPoolSize(10);
@@ -24,8 +26,11 @@ public class DBConnectionManager {
     }
 
     public Connection getConnection() throws SQLException {
-        Bukkit.getConsoleSender().sendMessage("Maximum: " + dataSource.getMaximumPoolSize());
-        Bukkit.getConsoleSender().sendMessage("Maximum: " + dataSource.getDataSource().);
+        HikariPoolMXBean poolMXBean = dataSource.getHikariPoolMXBean();
+        Bukkit.getConsoleSender().sendMessage("Active connections: " + poolMXBean.getActiveConnections());
+        Bukkit.getConsoleSender().sendMessage("Idle connections: " + poolMXBean.getIdleConnections());
+        Bukkit.getConsoleSender().sendMessage("Threads awaiting connection: " + poolMXBean.getThreadsAwaitingConnection());
+
         return dataSource.getConnection();
     }
 }
