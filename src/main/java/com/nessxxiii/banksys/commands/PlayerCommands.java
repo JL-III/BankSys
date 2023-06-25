@@ -10,10 +10,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerCommands implements CommandExecutor {
-    private final BankSys plugin;
+    private final TransactionManager transactionManager;
 
-    public PlayerCommands(BankSys plugin) {
-        this.plugin = plugin;
+    public PlayerCommands(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     @Override
@@ -24,7 +24,6 @@ public class PlayerCommands implements CommandExecutor {
 
         if (player.hasPermission("theatria.bank.bal.other")) {
             if (("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) && args.length == 2) {
-                TransactionManager transactionManager = new TransactionManager(plugin);
                 player.sendMessage(transactionManager.inquireBankBalance(Bukkit.getOfflinePlayer(args[1])));
                 return true;
             }
@@ -32,7 +31,6 @@ public class PlayerCommands implements CommandExecutor {
 
         if (player.hasPermission("theatria.bank.bal.self")) {
             if ("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) {
-                TransactionManager transactionManager = new TransactionManager(plugin);
                 player.sendMessage(transactionManager.inquireBankBalance(Bukkit.getOfflinePlayer(player.getUniqueId())));
                 return true;
             }

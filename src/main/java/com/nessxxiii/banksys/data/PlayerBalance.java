@@ -1,4 +1,4 @@
-package com.nessxxiii.banksys.models;
+package com.nessxxiii.banksys.data;
 
 public class PlayerBalance {
     private String uuid;

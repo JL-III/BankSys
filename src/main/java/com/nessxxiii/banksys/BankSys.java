@@ -1,25 +1,27 @@
 package com.nessxxiii.banksys;
 
 import com.nessxxiii.banksys.commands.PlayerCommands;
-import com.nessxxiii.banksys.db.Database;
-import com.nessxxiii.banksys.db.Bank;
+import com.nessxxiii.banksys.db.DBConnectionManager;
+import com.nessxxiii.banksys.db.PlayerBalanceDAO;
 import com.nessxxiii.banksys.managers.ConfigManager;
+import com.nessxxiii.banksys.managers.TransactionManager;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.SQLException;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public final class BankSys extends JavaPlugin {
-    private final CustomLogger log = new CustomLogger(this.getName(), NamedTextColor.GREEN, NamedTextColor.YELLOW);
-    private static Economy econ = null;
-    private Database database;
+    private final CustomLogger customLogger = new CustomLogger(this.getName(), NamedTextColor.GREEN, NamedTextColor.YELLOW);
+    private static Economy economy = null;
+    private DBConnectionManager DBConnectionManager;
+
+    private PlayerBalanceDAO playerBalanceDAO;
+
+    private TransactionManager transactionManager;
 
     private ConfigManager configManager;
 
@@ -30,29 +32,31 @@ public final class BankSys extends JavaPlugin {
         this.configManager = new ConfigManager(this);
         if (configManager.databaseConnectionValuesAreSet()) {
             if (!setupEconomy()) {
-                log.sendLog(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+                customLogger.sendLog(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
-            Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(this));
             try {
-                this.database = new Database(configManager, log);
-                new Bank(this).initialize();
+                this.DBConnectionManager = new DBConnectionManager(configManager);
+                this.playerBalanceDAO = new PlayerBalanceDAO(this);
+                this.playerBalanceDAO.initialize();
+                this.transactionManager = new TransactionManager(economy, playerBalanceDAO);
+                Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(transactionManager));
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 getServer().getPluginManager().disablePlugin(this);
             }
         } else {
-            log.sendLog(ChatColor.YELLOW + "Database connection values are not set, this plugin will not do anything until they are set.");
+            customLogger.sendLog("Database connection values are not set, this plugin will not do anything until they are set.");
         }
     }
 
     @Override
     public void onDisable() {
-        log.sendLog(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
-        if (this.database != null) {
+        customLogger.sendLog(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
+        if (this.DBConnectionManager != null) {
             try {
-                this.database.getConnection().close();
+                this.DBConnectionManager.getConnection().close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -70,15 +74,15 @@ public final class BankSys extends JavaPlugin {
             return false;
         }
 
-        econ = registeredServiceProvider.getProvider();
+        economy = registeredServiceProvider.getProvider();
         return true;
     }
 
     public Economy getEconomy() {
-        return econ;
+        return economy;
     }
 
-    public Database getDatabase() {
-        return database;
+    public DBConnectionManager getDBConnectionManager() {
+        return DBConnectionManager;
     }
 }

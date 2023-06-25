@@ -1,8 +1,8 @@
 package com.nessxxiii.banksys.managers;
 
 import com.nessxxiii.banksys.BankSys;
-import com.nessxxiii.banksys.db.Bank;
-import com.nessxxiii.banksys.models.TransactionLog;
+import com.nessxxiii.banksys.db.PlayerBalanceDAO;
+import com.nessxxiii.banksys.data.TransactionLog;
 import com.nessxxiii.banksys.enums.TransactionStatus;
 import com.nessxxiii.banksys.enums.TransactionType;
 import net.milkbowl.vault.economy.Economy;
@@ -14,12 +14,12 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class TransactionManager {
-    private final Bank bank;
+    private final PlayerBalanceDAO playerBalanceDAO;
     private final Economy economy;
 
-    public TransactionManager(BankSys plugin) {
-        this.bank = new Bank(plugin);
-        this.economy = plugin.getEconomy();
+    public TransactionManager(Economy economy, PlayerBalanceDAO playerBalanceDAO) {
+        this.playerBalanceDAO = playerBalanceDAO;
+        this.economy = economy;
     }
 
     //For internal usage
@@ -28,8 +28,8 @@ public class TransactionManager {
         String UUID = playerUUID.toString();
 
         try {
-            bank.createPlayerBalanceIfNotExists(UUID);
-            return bank.findPlayerBalance(UUID);
+            playerBalanceDAO.createPlayerBalanceIfNotExists(UUID);
+            return playerBalanceDAO.findPlayerBalance(UUID);
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
@@ -40,8 +40,8 @@ public class TransactionManager {
         UUID playerUUID = player.getUniqueId();
         String UUID = playerUUID.toString();
         try {
-            if (bank.findPlayerBalance(UUID) != null) {
-                return bank.findPlayerBalance(UUID).toString();
+            if (playerBalanceDAO.findPlayerBalance(UUID) != null) {
+                return playerBalanceDAO.findPlayerBalance(UUID).toString();
             } else {
                 throw new Exception("No player found");
             }
@@ -75,8 +75,8 @@ public class TransactionManager {
 
         try {
             // Fetch bank balance
-            bank.createPlayerBalanceIfNotExists(UUID);
-            oldBankBal = bank.findPlayerBalance(UUID);
+            playerBalanceDAO.createPlayerBalanceIfNotExists(UUID);
+            oldBankBal = playerBalanceDAO.findPlayerBalance(UUID);
 
             // Validate that player has sufficient funds
             if (amount > oldBankBal) {
@@ -85,8 +85,8 @@ public class TransactionManager {
             }
 
             // Remove amount from players bank
-            bank.updatePlayerBalance(UUID, -amount);
-            newBankBal = bank.findPlayerBalance(UUID);
+            playerBalanceDAO.updatePlayerBalance(UUID, -amount);
+            newBankBal = playerBalanceDAO.findPlayerBalance(UUID);
         } catch (Exception ex) {
             // Database update failed - notify the player and print a log
             // Neither the players balance nor the database should have changed.
@@ -142,10 +142,10 @@ public class TransactionManager {
         if (response.transactionSuccess()) {
             try {
                 // Add the balance to the players bank
-                bank.createPlayerBalanceIfNotExists(UUID);
-                oldBankBal = bank.findPlayerBalance(UUID);
-                bank.updatePlayerBalance(UUID, amount);
-                newBankBal = bank.findPlayerBalance(UUID);
+                playerBalanceDAO.createPlayerBalanceIfNotExists(UUID);
+                oldBankBal = playerBalanceDAO.findPlayerBalance(UUID);
+                playerBalanceDAO.updatePlayerBalance(UUID, amount);
+                newBankBal = playerBalanceDAO.findPlayerBalance(UUID);
 
                 // Transaction was successful
                 TransactionLog log = new TransactionLog(name, amount, TransactionType.DEPOSIT, TransactionStatus.SUCCESS);

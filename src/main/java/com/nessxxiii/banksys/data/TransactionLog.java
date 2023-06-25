@@ -1,4 +1,4 @@
-package com.nessxxiii.banksys.models;
+package com.nessxxiii.banksys.data;
 
 import com.nessxxiii.banksys.enums.TransactionStatus;
 import com.nessxxiii.banksys.enums.TransactionType;
