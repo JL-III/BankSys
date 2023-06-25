@@ -1,7 +1,8 @@
 package com.nessxxiii.banksys.managers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+
+import java.time.Duration;
 
 public class ConfigManager {
 
@@ -10,11 +11,13 @@ public class ConfigManager {
     private final String USER;
 
     private final String PASSWORD;
+    private final Integer COOLDOWN;
 
     public ConfigManager(Plugin plugin) {
         this.URL = plugin.getConfig().getString("URL");
         this.USER = plugin.getConfig().getString("USER");
         this.PASSWORD = plugin.getConfig().getString("PASSWORD");
+        this.COOLDOWN = plugin.getConfig().getInt("cooldown");
     }
 
     public String getURL() {
@@ -35,5 +38,9 @@ public class ConfigManager {
         } else {
             return false;
         }
+    }
+
+    public Duration getCooldown() {
+        return Duration.ofSeconds(COOLDOWN);
     }
 }

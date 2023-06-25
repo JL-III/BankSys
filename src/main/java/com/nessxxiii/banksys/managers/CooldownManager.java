@@ -8,12 +8,14 @@ import java.util.UUID;
 
 public class CooldownManager {
 
+    private ConfigManager configManager;
     private final Map<UUID, Instant> cooldownMap;
     private final Duration cooldownDuration;
 
-    public CooldownManager(Duration cooldownDuration) {
+    public CooldownManager(ConfigManager configManager) {
         this.cooldownMap = new HashMap<>();
-        this.cooldownDuration = cooldownDuration;
+        this.configManager = configManager;
+        this.cooldownDuration = configManager.getCooldown();
     }
 
     public boolean isCooldownOver(UUID uuid) {
@@ -23,6 +25,14 @@ public class CooldownManager {
             return Duration.between(lastUse, now).compareTo(cooldownDuration) >= 0;
         } else {
             return true;
+        }
+    }
+
+    public Duration getNextUse(UUID uuid) {
+        if (cooldownMap.containsKey(uuid)) {
+            return Duration.between(cooldownMap.get(uuid), Instant.now());
+        } else {
+            return null;
         }
     }
 

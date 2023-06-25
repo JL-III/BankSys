@@ -38,10 +38,11 @@ public final class BankSys extends JavaPlugin {
             }
             try {
                 this.dBConnectionManager = new DBConnectionManager(configManager);
-                this.playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager);
-                this.playerBalanceDAO.initialize();
+                this.playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
+                this.playerBalanceDAO.initializeDatabase();
                 this.transactionManager = new TransactionManager(economy, playerBalanceDAO, customLogger);
-                Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(transactionManager));
+                Objects.requireNonNull(getCommand("bank")).setExecutor(new PlayerCommands(transactionManager, configManager));
+                customLogger.sendLog("Successfully initialized BankSys!");
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 getServer().getPluginManager().disablePlugin(this);

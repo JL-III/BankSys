@@ -1,7 +1,6 @@
 package com.nessxxiii.banksys.managers;
 
 import com.nessxxiii.banksys.db.PlayerBalanceDAO;
-import com.nessxxiii.banksys.data.TransactionLog;
 import com.nessxxiii.banksys.enums.TransactionStatus;
 import com.nessxxiii.banksys.enums.TransactionType;
 import com.nessxxiii.banksys.util.TransactionLogger;
@@ -12,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import javax.swing.text.html.Option;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,11 +32,10 @@ public class TransactionManager {
     //For internal usage
     public Integer getBankBalance(Player player) {
         UUID playerUUID = player.getUniqueId();
-        String UUID = playerUUID.toString();
 
         try {
-            playerBalanceDAO.createPlayerBalanceIfNotExists(UUID);
-            return playerBalanceDAO.findPlayerBalance(UUID).get();
+            playerBalanceDAO.createPlayerBalanceIfNotExists(playerUUID);
+            return playerBalanceDAO.findPlayerBalance(playerUUID).get();
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
@@ -46,10 +43,10 @@ public class TransactionManager {
     }
     //Used for the balance command
     public String inquireBankBalance(OfflinePlayer player) {
-        String UUID = player.getUniqueId().toString();
+        UUID playerUUID = player.getUniqueId();
         try {
-            if (playerBalanceDAO.findPlayerBalance(UUID).isPresent()) {
-                return playerBalanceDAO.findPlayerBalance(UUID).toString();
+            if (playerBalanceDAO.findPlayerBalance(playerUUID).isPresent()) {
+                return playerBalanceDAO.findPlayerBalance(playerUUID).toString();
             } else {
                 throw new Exception("No player found");
             }
@@ -61,7 +58,7 @@ public class TransactionManager {
 
     public void withdrawFromBank(OfflinePlayer player, int amount) {
         String name = player.getName();
-        String playerUUID = player.getUniqueId().toString();
+        UUID playerUUID = player.getUniqueId();
 
         Integer oldBankBal;
         Integer newBankBal;
@@ -134,7 +131,7 @@ public class TransactionManager {
 
     public void depositToBank(OfflinePlayer player, int amount) {
         String name = player.getName();
-        String playerUUID = player.getUniqueId().toString();
+        UUID playerUUID = player.getUniqueId();
 
         Integer oldBankBal = null;
         Integer newBankBal = null;
@@ -156,17 +153,11 @@ public class TransactionManager {
                 // Add the balance to the players bank
                 playerBalanceDAO.createPlayerBalanceIfNotExists(playerUUID);
                 Optional<Integer> oldBankBalOpt = playerBalanceDAO.findPlayerBalance(playerUUID);
-                Optional<Integer> newBankBalOpt = playerBalanceDAO.findPlayerBalance(playerUUID);
+
                 if (oldBankBalOpt.isPresent()) {
                     oldBankBal = oldBankBalOpt.get();
                 } else {
                     throw new SQLException("Old player balance for player " + name + " was not found!");
-                }
-
-                if (newBankBalOpt.isPresent()) {
-                    newBankBal = newBankBalOpt.get();
-                } else {
-                    throw new SQLException("New player balance for player " + name + " was not found!");
                 }
 
                 playerBalanceDAO.updatePlayerBalance(playerUUID, amount);
