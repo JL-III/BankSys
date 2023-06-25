@@ -22,7 +22,8 @@ public class PlayerBalanceDAO {
     }
 
     public void initializeDatabase() throws DatabaseOperationException {
-        try (Statement statement = dbConnectionManager.getConnection().createStatement()) {
+        try (Connection connection = dbConnectionManager.getConnection();
+                Statement statement = connection.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key, balance INT(30))");
         } catch (SQLException e) {
             customLogger.sendLog("Exception while initializing database: " + e.getMessage());
@@ -32,7 +33,8 @@ public class PlayerBalanceDAO {
 
     public List<PlayerBalance> getBalances() throws SQLException {
         List<PlayerBalance> result = new ArrayList<>();
-        try (PreparedStatement statement = dbConnectionManager.getConnection().prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
+        try (Connection connection = dbConnectionManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 PlayerBalance balance = new PlayerBalance();
@@ -47,7 +49,8 @@ public class PlayerBalanceDAO {
     public Optional<Integer> findPlayerBalance(UUID playerUUID) throws SQLException {
         Optional<Integer> balance = Optional.empty();
 
-        try (PreparedStatement preparedStatement = dbConnectionManager.getConnection().prepareStatement("SELECT balance FROM player_bank WHERE playerUUID = ?")) {
+        try (Connection connection = dbConnectionManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT balance FROM player_bank WHERE playerUUID = ?")) {
 
             preparedStatement.setString(1, playerUUID.toString());
 
@@ -62,7 +65,8 @@ public class PlayerBalanceDAO {
 
     public boolean createPlayerBalanceIfNotExists(UUID playerUUID) throws RuntimeException {
         try {
-            try (PreparedStatement preparedStatement = dbConnectionManager.getConnection().prepareStatement("INSERT IGNORE INTO player_bank(playerUUID,balance) VALUES (?,?)")) {
+            try (Connection connection = dbConnectionManager.getConnection();
+                    PreparedStatement preparedStatement = connection.prepareStatement("INSERT IGNORE INTO player_bank(playerUUID,balance) VALUES (?,?)")) {
                 preparedStatement.setString(1, playerUUID.toString());
                 preparedStatement.setInt(2, 0);
 
@@ -89,7 +93,8 @@ public class PlayerBalanceDAO {
         int newBalance;
         if (currentBalance.isPresent()) {
             newBalance = currentBalance.get() + amount;
-            try (PreparedStatement preparedStatement = dbConnectionManager.getConnection().prepareStatement("UPDATE player_bank SET balance = ? WHERE playerUUID = ?")) {
+            try (Connection connection = dbConnectionManager.getConnection();
+                    PreparedStatement preparedStatement = connection.prepareStatement("UPDATE player_bank SET balance = ? WHERE playerUUID = ?")) {
                 preparedStatement.setInt(1, newBalance);
                 preparedStatement.setString(2, playerUUID.toString());
                 preparedStatement.executeUpdate();
