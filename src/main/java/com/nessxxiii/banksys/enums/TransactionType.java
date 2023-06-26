@@ -1,9 +1,9 @@
 package com.nessxxiii.banksys.enums;
 
 public enum TransactionType {
-    WITHDRAW("Withdraw"),
-    DEPOSIT("Deposit"),
-    INQUIRY("Inquiry");
+    WITHDRAWAL("withdrawal"),
+    DEPOSIT("deposit"),
+    INQUIRY("inquiry");
 
     private final String name;
 

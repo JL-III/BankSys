@@ -5,6 +5,7 @@ import com.nessxxiii.banksys.managers.CooldownManager;
 import com.nessxxiii.banksys.service.TransactionService;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -55,22 +56,21 @@ public class PlayerCommands implements CommandExecutor {
 
         if (player.hasPermission("theatria.bank.bal.self")) {
             if ("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) {
-                player.sendMessage("Your bank balance is " + transactionService.inquiry(player.getUniqueId()));
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "Bank Balance: " + ChatColor.YELLOW + transactionService.inquiry(player.getUniqueId()));
                 return true;
             }
         }
 
         if (player.hasPermission("theatria.bank.deposit")) {
             if (args[0].equalsIgnoreCase("deposit") && args.length == 2) {
-                transactionService.deposit(Bukkit.getOfflinePlayer(player.getUniqueId()), args[1]);
+                player.sendMessage(transactionService.deposit(Bukkit.getOfflinePlayer(player.getUniqueId()), args[1]));
                 return true;
             }
         }
 
         if (player.hasPermission("theatria.bank.withdraw")) {
             if (args[0].equalsIgnoreCase("withdraw") && args.length == 2) {
-                player.sendMessage("Sent request to withdraw --- dummy message need to implement.");
-                transactionService.withdraw(Bukkit.getOfflinePlayer(player.getUniqueId()), args[1]);
+                player.sendMessage(transactionService.withdraw(Bukkit.getOfflinePlayer(player.getUniqueId()), args[1]));
                 return true;
             }
         }
