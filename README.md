@@ -1,4 +1,4 @@
-# BankSys2  
+# BankSys
 
 ## A MySQL bank plugin  
 
