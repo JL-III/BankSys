@@ -8,21 +8,19 @@ import java.util.UUID;
 
 public class CooldownManager {
 
-    private ConfigManager configManager;
+    private final ConfigManager configManager;
     private final Map<UUID, Instant> cooldownMap;
-    private final Duration cooldownDuration;
 
     public CooldownManager(ConfigManager configManager) {
         this.cooldownMap = new HashMap<>();
         this.configManager = configManager;
-        this.cooldownDuration = configManager.getCooldown();
     }
 
     public boolean isCooldownOver(UUID uuid) {
         Instant now = Instant.now();
         if (cooldownMap.containsKey(uuid)) {
             Instant lastUse = cooldownMap.get(uuid);
-            return Duration.between(lastUse, now).compareTo(cooldownDuration) >= 0;
+            return Duration.between(lastUse, now).compareTo(configManager.getCooldown()) >= 0;
         } else {
             return true;
         }
@@ -31,8 +29,8 @@ public class CooldownManager {
     public Long getNextUse(UUID uuid) {
         if (cooldownMap.containsKey(uuid)) {
             Duration timeSinceLastUse = Duration.between(cooldownMap.get(uuid), Instant.now());
-            if (timeSinceLastUse.compareTo(cooldownDuration) < 0) {
-                return cooldownDuration.minus(timeSinceLastUse).toSeconds();
+            if (timeSinceLastUse.compareTo(configManager.getCooldown()) < 0) {
+                return configManager.getCooldown().minus(timeSinceLastUse).toSeconds();
             } else {
                 // Cooldown has already expired
                 return Duration.ZERO.toSeconds();
@@ -41,7 +39,6 @@ public class CooldownManager {
             return 0L;
         }
     }
-
 
     public void updateCooldown(UUID uuid) {
         cooldownMap.put(uuid, Instant.now());

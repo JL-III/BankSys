@@ -6,12 +6,21 @@ import java.time.Duration;
 
 public class ConfigManager {
 
-    private final String URL;
-    private final String USER;
-    private final String PASSWORD;
-    private final Integer COOLDOWN;
+    private final Plugin plugin;
+    private String URL;
+    private String USER;
+    private String PASSWORD;
+    private Integer COOLDOWN;
 
     public ConfigManager(Plugin plugin) {
+        this.plugin = plugin;
+        this.URL = plugin.getConfig().getString("URL");
+        this.USER = plugin.getConfig().getString("USER");
+        this.PASSWORD = plugin.getConfig().getString("PASSWORD");
+        this.COOLDOWN = plugin.getConfig().getInt("cooldown");
+    }
+
+    public void reloadConfigManager() {
         this.URL = plugin.getConfig().getString("URL");
         this.USER = plugin.getConfig().getString("USER");
         this.PASSWORD = plugin.getConfig().getString("PASSWORD");

@@ -45,7 +45,7 @@ public class PlayerBalanceDAO {
         return balance;
     }
 
-    public boolean createPlayerBalanceIfNotExists(UUID playerUUID) throws RuntimeException {
+    public void createPlayerBalanceIfNotExists(UUID playerUUID) throws RuntimeException {
         try {
             try (Connection connection = dbConnectionManager.getConnection();
                     PreparedStatement preparedStatement = connection.prepareStatement("INSERT IGNORE INTO player_bank(playerUUID,balance) VALUES (?,?)")) {
@@ -55,10 +55,9 @@ public class PlayerBalanceDAO {
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
                     customLogger.sendLog("Player balance was found for " + playerUUID + " not creating new entry.");
-                    return false;
+                    return;
                 }
                 customLogger.sendLog("Created entry in BankSys for " + playerUUID);
-                return true;
             } catch (SQLException e) {
                 customLogger.sendLog("Failed to update entry for " + playerUUID);
                 throw new DatabaseOperationException("Failed to update entry!", e);
@@ -68,7 +67,6 @@ public class PlayerBalanceDAO {
             throw new RuntimeException("Error while trying to create player balance", e);
         }
     }
-
 
     public int updatePlayerBalance(UUID playerUUID, int amount) throws SQLException {
         Optional<Integer> currentBalance = findPlayerBalance(playerUUID);

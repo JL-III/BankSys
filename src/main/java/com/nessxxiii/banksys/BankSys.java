@@ -4,6 +4,7 @@ import com.nessxxiii.banksys.commands.PlayerCommands;
 import com.nessxxiii.banksys.db.DBConnectionManager;
 import com.nessxxiii.banksys.dao.PlayerBalanceDAO;
 import com.nessxxiii.banksys.managers.ConfigManager;
+import com.nessxxiii.banksys.managers.CooldownManager;
 import com.nessxxiii.banksys.transaction.TransactionService;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,7 +22,6 @@ public final class BankSys extends JavaPlugin {
     private PlayerBalanceDAO playerBalanceDAO;
     private TransactionService transactionService;
     private ConfigManager configManager;
-
     private PlayerCommands playerCommands;
 
     @Override
@@ -31,7 +31,7 @@ public final class BankSys extends JavaPlugin {
         this.configManager = new ConfigManager(this);
         if (configManager.databaseConnectionValuesAreSet()) {
             if (!setupEconomy()) {
-                customLogger.sendLog(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+                customLogger.sendLog("Disabled due to no Vault dependency found!");
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
@@ -40,7 +40,7 @@ public final class BankSys extends JavaPlugin {
                 playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
                 playerBalanceDAO.initializeDatabase();
                 transactionService = new TransactionService(economy, playerBalanceDAO, customLogger);
-                playerCommands = new PlayerCommands(transactionService, configManager, customLogger);
+                playerCommands = new PlayerCommands(transactionService, new CooldownManager(configManager), customLogger);
                 Objects.requireNonNull(getCommand("bank")).setExecutor(playerCommands);
                 customLogger.sendLog("Successfully initialized!");
             } catch (Exception ex) {
@@ -54,7 +54,7 @@ public final class BankSys extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        customLogger.sendLog(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
+        customLogger.sendLog(String.format("Disabled Version %s", getDescription().getVersion()));
         if (this.dBConnectionManager != null) {
             try {
                 this.dBConnectionManager.getConnection().close();
@@ -77,12 +77,6 @@ public final class BankSys extends JavaPlugin {
 
         economy = registeredServiceProvider.getProvider();
         return true;
-    }
-
-    public void reloadConfigManager() {
-        configManager = new ConfigManager(this);
-        playerCommands.reloadConfigManager(configManager);
-        customLogger.sendLog("Reloaded command config.\nRestart the server to reload the database configuration.");
     }
 
 }

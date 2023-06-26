@@ -19,10 +19,10 @@ public class PlayerCommands implements CommandExecutor {
     private final CustomLogger customLogger;
     private CooldownManager cooldownManager;
 
-    public PlayerCommands(TransactionService transactionService, ConfigManager configManager, CustomLogger customLogger) {
+    public PlayerCommands(TransactionService transactionService, CooldownManager cooldownManager, CustomLogger customLogger) {
         this.transactionService = transactionService;
         this.customLogger = customLogger;
-        this.cooldownManager = new CooldownManager(configManager);
+        this.cooldownManager = cooldownManager;
     }
 
     @Override

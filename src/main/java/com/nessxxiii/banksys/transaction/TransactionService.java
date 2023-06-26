@@ -28,18 +28,6 @@ public class TransactionService {
         this.customLogger = customLogger;
     }
 
-    //For internal usage
-    public Integer getBankBalance(Player player) {
-        UUID playerUUID = player.getUniqueId();
-
-        try {
-            playerBalanceDAO.createPlayerBalanceIfNotExists(playerUUID);
-            return playerBalanceDAO.findPlayerBalance(playerUUID).orElseThrow();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
     //Used for the balance command
     public String inquiry(UUID playerUUID) {
         try {

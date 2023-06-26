@@ -21,7 +21,6 @@ public class DBConnectionManager {
         config.setValidationTimeout(TimeUnit.SECONDS.toMillis(5));
         config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(30));
         config.setMaximumPoolSize(10);
-
         dataSource = new HikariDataSource(config);
     }
 
