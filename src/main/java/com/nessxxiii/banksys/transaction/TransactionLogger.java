@@ -1,8 +1,8 @@
-package com.nessxxiii.banksys.util;
+package com.nessxxiii.banksys.transaction;
 
-import com.nessxxiii.banksys.data.TransactionLog;
-import com.nessxxiii.banksys.enums.TransactionStatus;
-import com.nessxxiii.banksys.enums.TransactionType;
+import com.nessxxiii.banksys.transaction.TransactionLog;
+import com.nessxxiii.banksys.transaction.TransactionStatus;
+import com.nessxxiii.banksys.transaction.TransactionType;
 import org.bukkit.Bukkit;
 
 import java.util.UUID;

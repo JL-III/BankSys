@@ -2,7 +2,7 @@ package com.nessxxiii.banksys.commands;
 
 import com.nessxxiii.banksys.managers.ConfigManager;
 import com.nessxxiii.banksys.managers.CooldownManager;
-import com.nessxxiii.banksys.service.TransactionService;
+import com.nessxxiii.banksys.transaction.TransactionService;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

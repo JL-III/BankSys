@@ -7,9 +7,7 @@ import java.time.Duration;
 public class ConfigManager {
 
     private final String URL;
-
     private final String USER;
-
     private final String PASSWORD;
     private final Integer COOLDOWN;
 
@@ -33,11 +31,7 @@ public class ConfigManager {
     }
 
     public boolean databaseConnectionValuesAreSet() {
-        if (getURL().length() > 0 && getUSER().length() > 0 && getPASSWORD().length() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return getURL().length() > 0 && getUSER().length() > 0 && getPASSWORD().length() > 0;
     }
 
     public Duration getCooldown() {

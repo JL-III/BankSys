@@ -1,4 +1,4 @@
-package com.nessxxiii.banksys.enums;
+package com.nessxxiii.banksys.transaction;
 
 public enum TransactionStatus {
     SUCCESS("Success"),

@@ -1,7 +1,5 @@
-package com.nessxxiii.banksys.data;
+package com.nessxxiii.banksys.transaction;
 
-import com.nessxxiii.banksys.enums.TransactionStatus;
-import com.nessxxiii.banksys.enums.TransactionType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 

@@ -1,13 +1,10 @@
 package com.nessxxiii.banksys.dao;
 
-import com.nessxxiii.banksys.data.PlayerBalance;
 import com.nessxxiii.banksys.db.DBConnectionManager;
 import com.nessxxiii.banksys.exceptions.DatabaseOperationException;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,20 +28,20 @@ public class PlayerBalanceDAO {
         }
     }
 
-    public List<PlayerBalance> getBalances() throws SQLException {
-        List<PlayerBalance> result = new ArrayList<>();
-        try (Connection connection = dbConnectionManager.getConnection();
-                PreparedStatement statement = connection.prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                PlayerBalance balance = new PlayerBalance();
-                balance.setUuid(resultSet.getString("playerUUID"));
-                balance.setBalance(resultSet.getInt("balance"));
-                result.add(balance);
-            }
-        }
-        return result;
-    }
+//    public List<PlayerBalance> getBalances() throws SQLException {
+//        List<PlayerBalance> result = new ArrayList<>();
+//        try (Connection connection = dbConnectionManager.getConnection();
+//                PreparedStatement statement = connection.prepareStatement("SELECT playerUUID, balance FROM player_bank WHERE balance > 1");
+//             ResultSet resultSet = statement.executeQuery()) {
+//            while (resultSet.next()) {
+//                PlayerBalance balance = new PlayerBalance();
+//                balance.setUuid(resultSet.getString("playerUUID"));
+//                balance.setBalance(resultSet.getInt("balance"));
+//                result.add(balance);
+//            }
+//        }
+//        return result;
+//    }
 
     public Optional<Integer> findPlayerBalance(UUID playerUUID) throws SQLException {
         Optional<Integer> balance = Optional.empty();
