@@ -17,6 +17,8 @@ out/
 # BlueJ files
 *.ctxt
 
+/META-INF/
+
 # Package Files #
 *.jar
 *.war
