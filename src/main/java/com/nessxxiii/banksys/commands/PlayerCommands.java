@@ -3,6 +3,7 @@ package com.nessxxiii.banksys.commands;
 import com.nessxxiii.banksys.managers.ConfigManager;
 import com.nessxxiii.banksys.managers.CooldownManager;
 import com.nessxxiii.banksys.service.TransactionService;
+import com.nessxxiii.banksys.utils.Validation;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -50,7 +51,7 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
         if (args.length < 1) return false;
 
         if (!cooldownManager.isCooldownOver(player.getUniqueId())) {
-            player.sendMessage("You must wait " + cooldownManager.getNextUse(player.getUniqueId()) + " seconds to use the bank again!");
+            player.sendMessage( ChatColor.RED + "You must wait " + ChatColor.YELLOW + cooldownManager.getNextUse(player.getUniqueId()) + ChatColor.RED + " seconds to use the bank again!");
             return true;
         } else {
             cooldownManager.updateCooldown(player.getUniqueId());
@@ -58,7 +59,6 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
 
         if (player.hasPermission(bankBalOtherPermission)) {
             if (("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) && args.length == 2) {
-                //TODO see what happens when you try to find a player that does not exist
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
                 player.sendMessage(transactionService.inquiry(offlinePlayer.getUniqueId()));
                 return true;
@@ -74,14 +74,24 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
 
         if (player.hasPermission("theatria.bank.deposit") && !configManager.isMainServer()) {
             if (args[0].equalsIgnoreCase("deposit") && args.length == 2) {
-                player.sendMessage(transactionService.deposit(Bukkit.getOfflinePlayer(player.getUniqueId()), args[1]));
+                int amount = Validation.processPlayerInputAmount(args[1]);
+                if (amount <= 0) {
+                    player.sendMessage(ChatColor.RED + "You must provide a whole number greater than 0.");
+                    return true;
+                }
+                player.sendMessage(transactionService.deposit(Bukkit.getOfflinePlayer(player.getUniqueId()), amount));
                 return true;
             }
         }
 
         if (player.hasPermission("theatria.bank.withdraw") && configManager.isMainServer()) {
             if (args[0].equalsIgnoreCase("withdraw") && args.length == 2) {
-                player.sendMessage(transactionService.withdraw(Bukkit.getOfflinePlayer(player.getUniqueId()), args[1]));
+                int amount = Validation.processPlayerInputAmount(args[1]);
+                if (amount <= 0) {
+                    player.sendMessage(ChatColor.RED + "You must provide a whole number greater than 0.");
+                    return true;
+                }
+                player.sendMessage(transactionService.withdraw(Bukkit.getOfflinePlayer(player.getUniqueId()), amount));
                 return true;
             }
         }
@@ -95,9 +105,7 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        if (!(commandSender instanceof Player player)) {
-            return null;
-        } else {
+        if (commandSender instanceof Player player) {
             if (args[0].equalsIgnoreCase("bal") && args.length == 2 && player.hasPermission(bankBalOtherPermission)) {
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
             }
@@ -108,7 +116,7 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
                     return List.of("bal", "deposit");
                 }
             }
-            return List.of("");
         }
+        return null;
     }
 }

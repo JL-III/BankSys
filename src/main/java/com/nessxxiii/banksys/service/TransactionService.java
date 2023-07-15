@@ -44,39 +44,31 @@ public class TransactionService {
         }
     }
 
-    public String deposit(OfflinePlayer player, String arg) {
-       return processTransaction(player, arg, TransactionType.DEPOSIT, economy::withdrawPlayer);
+    public String deposit(OfflinePlayer player, int amount) {
+       return processTransaction(player, amount, TransactionType.DEPOSIT, economy::withdrawPlayer);
     }
 
-    public String withdraw(OfflinePlayer player, String arg) {
-       return processTransaction(player, arg, TransactionType.WITHDRAWAL, economy::depositPlayer);
+    public String withdraw(OfflinePlayer player, int amount) {
+       return processTransaction(player, amount, TransactionType.WITHDRAWAL, economy::depositPlayer);
     }
 
-    private String processTransaction(OfflinePlayer player, String arg, TransactionType transactionType, BiFunction<OfflinePlayer, Integer, EconomyResponse> transactionFunc) {
+    private String processTransaction(OfflinePlayer player, int amount, TransactionType transactionType, BiFunction<OfflinePlayer, Integer, EconomyResponse> transactionFunc) {
         UUID playerUUID = player.getUniqueId();
 
         // Get current balance and amount to transfer
         double oldEssentialsBal = economy.getBalance(player);
-        Integer amount;
-        try {
-            amount = Integer.parseInt(arg);
-        } catch (NumberFormatException ex) {
-            customLogger.sendLog("Player did not provide an integer value.");
-            return "Please provide an integer value.";
-        }
 
         // Check if player has sufficient funds
         if (transactionType == TransactionType.DEPOSIT && amount > oldEssentialsBal) {
             transactionLogger.logTransaction(playerUUID, amount, transactionType, TransactionStatus.INSUFFICIENT_FUNDS);
             return ChatColor.RED
                     + "You do not have sufficient funds!\n"
-                    + "Deposit Requested: " + amount + "\n"
-                    + "Balance: " + oldEssentialsBal;
+                    + "Deposit Requested: " + ChatColor.YELLOW + formatter().format(amount) + "\n"
+                    + ChatColor.RED
+                    + "Wallet: " + ChatColor.YELLOW + formatter().format(oldEssentialsBal);
         }
 
         try {
-            // Create the balance if not exists
-            playerBalanceDAO.createPlayerBalanceIfNotExists(playerUUID);
             // Get old bank balance
             Integer oldBankBal = playerBalanceDAO.findPlayerBalance(playerUUID).orElseThrow(() -> new SQLException("Old player balance for player " + player.getName() + " was not found!"));
             // Process the transaction on bank system
@@ -134,7 +126,6 @@ public class TransactionService {
             return -1;
         }
     }
-
 
     private NumberFormat formatter() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);

@@ -18,7 +18,7 @@ public class ConfigManager {
         this.url = plugin.getConfig().getString("url");
         this.user = plugin.getConfig().getString("user");
         this.password = plugin.getConfig().getString("password");
-        this.isMainServer = plugin.getConfig().getBoolean("isMainServer");
+        this.isMainServer = plugin.getConfig().getBoolean("is-main-server");
         this.cooldown = plugin.getConfig().getInt("cooldown");
     }
 
@@ -26,7 +26,7 @@ public class ConfigManager {
         this.url = plugin.getConfig().getString("url");
         this.user = plugin.getConfig().getString("user");
         this.password = plugin.getConfig().getString("password");
-        this.isMainServer = plugin.getConfig().getBoolean("isMainServer");
+        this.isMainServer = plugin.getConfig().getBoolean("is-main-server");
         this.cooldown = plugin.getConfig().getInt("cooldown");
     }
 
