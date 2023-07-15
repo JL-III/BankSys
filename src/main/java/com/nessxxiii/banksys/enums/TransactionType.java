@@ -1,4 +1,4 @@
-package com.nessxxiii.banksys.transaction;
+package com.nessxxiii.banksys.enums;
 
 public enum TransactionType {
     WITHDRAWAL("withdrawal"),

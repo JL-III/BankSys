@@ -5,7 +5,7 @@ import com.nessxxiii.banksys.db.DBConnectionManager;
 import com.nessxxiii.banksys.dao.PlayerBalanceDAO;
 import com.nessxxiii.banksys.managers.ConfigManager;
 import com.nessxxiii.banksys.managers.CooldownManager;
-import com.nessxxiii.banksys.transaction.TransactionService;
+import com.nessxxiii.banksys.service.TransactionService;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;

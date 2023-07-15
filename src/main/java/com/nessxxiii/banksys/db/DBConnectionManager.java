@@ -14,9 +14,9 @@ public class DBConnectionManager {
 
     public DBConnectionManager(ConfigManager configManager) {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(configManager.getURL());
-        config.setUsername(configManager.getUSER());
-        config.setPassword(configManager.getPASSWORD());
+        config.setJdbcUrl(configManager.getUrl());
+        config.setUsername(configManager.getUser());
+        config.setPassword(configManager.getPassword());
         config.setRegisterMbeans(true);
         config.setValidationTimeout(TimeUnit.SECONDS.toMillis(5));
         config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(30));

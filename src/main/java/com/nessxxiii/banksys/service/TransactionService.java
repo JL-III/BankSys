@@ -1,14 +1,16 @@
-package com.nessxxiii.banksys.transaction;
+package com.nessxxiii.banksys.service;
 
 import com.nessxxiii.banksys.dao.PlayerBalanceDAO;
+import com.nessxxiii.banksys.enums.TransactionStatus;
+import com.nessxxiii.banksys.enums.TransactionType;
 import com.nessxxiii.banksys.exceptions.DatabaseOperationException;
+import com.nessxxiii.banksys.logging.TransactionLogger;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
 import java.text.NumberFormat;
@@ -66,36 +68,45 @@ public class TransactionService {
         // Check if player has sufficient funds
         if (transactionType == TransactionType.DEPOSIT && amount > oldEssentialsBal) {
             transactionLogger.logTransaction(playerUUID, amount, transactionType, TransactionStatus.INSUFFICIENT_FUNDS);
-            return ChatColor.RED + "You do not have sufficient funds!\n" + "Deposit Requested: " + amount + "\n" + "Balance: " + oldEssentialsBal;
+            return ChatColor.RED
+                    + "You do not have sufficient funds!\n"
+                    + "Deposit Requested: " + amount + "\n"
+                    + "Balance: " + oldEssentialsBal;
         }
 
         try {
             // Create the balance if not exists
             playerBalanceDAO.createPlayerBalanceIfNotExists(playerUUID);
-
             // Get old bank balance
             Integer oldBankBal = playerBalanceDAO.findPlayerBalance(playerUUID).orElseThrow(() -> new SQLException("Old player balance for player " + player.getName() + " was not found!"));
-
             // Process the transaction on bank system
             int newBankBal = processBankTransaction(playerUUID, amount, transactionType);
-
             // If bank transaction successful, process the transaction on economy plugin
             if (newBankBal >= 0) {
                 EconomyResponse response = transactionFunc.apply(player, amount);
                 if (!response.transactionSuccess()) {
                     transactionLogger.logTransaction(playerUUID, amount, oldBankBal, null, oldEssentialsBal, economy.getBalance(player), transactionType, TransactionStatus.ERROR_E3);
-                    return ChatColor.RED + "There was an error processing this command - Contact an admin immediately for help!\n" + TransactionStatus.ERROR_E3;
+                    return ChatColor.RED
+                            + "There was an error processing this command - Contact an admin immediately for help!\n"
+                            + TransactionStatus.ERROR_E3;
                 }
-
                 // Log the transaction
                 transactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, response.balance, transactionType, TransactionStatus.SUCCESS);
-                return ChatColor.GREEN + "Successful " + transactionType + " of " + ChatColor.YELLOW + formatter().format(amount) + ChatColor.GREEN + "\nBalance: " + ChatColor.RED + formatter().format(response.balance) + ChatColor.LIGHT_PURPLE + "\nBank Balance: " + ChatColor.YELLOW + formatter().format(newBankBal);
+                return ChatColor.GREEN
+                        + "Successful " + transactionType + " of " + ChatColor.YELLOW + formatter().format(amount) + ChatColor.GREEN + "\n"
+                        + "Balance: " + ChatColor.RED + formatter().format(response.balance) + ChatColor.LIGHT_PURPLE + "\n"
+                        + "Bank Balance: " + ChatColor.YELLOW + formatter().format(newBankBal);
             }
-            return ChatColor.RED + "An error occurred, do you have sufficient funds?" + ChatColor.YELLOW + "\nRequested Amount: " + ChatColor.RED + formatter().format(amount) + ChatColor.LIGHT_PURPLE + "\nBank Balance: " + ChatColor.YELLOW + formatter().format(oldBankBal);
+            return ChatColor.RED
+                    + "An error occurred, do you have sufficient funds?" + ChatColor.YELLOW + "\n"
+                    + "Requested Amount: " + ChatColor.RED + formatter().format(amount) + ChatColor.LIGHT_PURPLE + "\n"
+                    + "Bank Balance: " + ChatColor.YELLOW + formatter().format(oldBankBal);
         } catch (SQLException ex) {
             transactionLogger.logTransaction(playerUUID, amount, null, null, oldEssentialsBal, economy.getBalance(player), transactionType, TransactionStatus.ERROR_E4);
             ex.printStackTrace();
-            return ChatColor.RED + "There was an error processing this command - Contact an admin immediately for help!\n" + TransactionStatus.ERROR_E4;
+            return ChatColor.RED
+                    + "There was an error processing this command - Contact an admin immediately for help!\n"
+                    + TransactionStatus.ERROR_E4;
         }
     }
 

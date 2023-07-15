@@ -7,43 +7,50 @@ import java.time.Duration;
 public class ConfigManager {
 
     private final Plugin plugin;
-    private String URL;
-    private String USER;
-    private String PASSWORD;
-    private Integer COOLDOWN;
+    private String url;
+    private String user;
+    private String password;
+    private boolean isMainServer;
+    private Integer cooldown;
 
     public ConfigManager(Plugin plugin) {
         this.plugin = plugin;
-        this.URL = plugin.getConfig().getString("URL");
-        this.USER = plugin.getConfig().getString("USER");
-        this.PASSWORD = plugin.getConfig().getString("PASSWORD");
-        this.COOLDOWN = plugin.getConfig().getInt("cooldown");
+        this.url = plugin.getConfig().getString("url");
+        this.user = plugin.getConfig().getString("user");
+        this.password = plugin.getConfig().getString("password");
+        this.isMainServer = plugin.getConfig().getBoolean("isMainServer");
+        this.cooldown = plugin.getConfig().getInt("cooldown");
     }
 
     public void reloadConfigManager() {
-        this.URL = plugin.getConfig().getString("URL");
-        this.USER = plugin.getConfig().getString("USER");
-        this.PASSWORD = plugin.getConfig().getString("PASSWORD");
-        this.COOLDOWN = plugin.getConfig().getInt("cooldown");
+        this.url = plugin.getConfig().getString("url");
+        this.user = plugin.getConfig().getString("user");
+        this.password = plugin.getConfig().getString("password");
+        this.isMainServer = plugin.getConfig().getBoolean("isMainServer");
+        this.cooldown = plugin.getConfig().getInt("cooldown");
     }
 
-    public String getURL() {
-        return URL;
+    public String getUrl() {
+        return url;
     }
 
-    public String getUSER() {
-        return USER;
+    public String getUser() {
+        return user;
     }
 
-    public String getPASSWORD() {
-        return PASSWORD;
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isMainServer() {
+        return isMainServer;
     }
 
     public boolean databaseConnectionValuesAreSet() {
-        return getURL().length() > 0 && getUSER().length() > 0 && getPASSWORD().length() > 0;
+        return getUrl().length() > 0 && getUser().length() > 0 && getPassword().length() > 0;
     }
 
     public Duration getCooldown() {
-        return Duration.ofSeconds(COOLDOWN);
+        return Duration.ofSeconds(cooldown);
     }
 }
