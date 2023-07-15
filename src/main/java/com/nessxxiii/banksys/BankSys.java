@@ -9,6 +9,7 @@ import com.nessxxiii.banksys.service.TransactionService;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,8 +41,9 @@ public final class BankSys extends JavaPlugin {
                 playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
                 playerBalanceDAO.initializeDatabase();
                 transactionService = new TransactionService(economy, playerBalanceDAO, customLogger);
-                playerCommands = new PlayerCommands(transactionService, new CooldownManager(configManager), customLogger);
+                playerCommands = new PlayerCommands(economy, transactionService, configManager, new CooldownManager(configManager), customLogger);
                 Objects.requireNonNull(getCommand("bank")).setExecutor(playerCommands);
+                Objects.requireNonNull(getCommand("bank")).setTabCompleter(playerCommands);
                 customLogger.sendLog("Successfully initialized!");
             } catch (Exception ex) {
                 ex.printStackTrace();
