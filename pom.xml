@@ -6,7 +6,7 @@
 
     <groupId>com.nessxxiii</groupId>
     <artifactId>banksys</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>v0.0.1-alpha-1</version>
     <packaging>jar</packaging>
 
     <properties>

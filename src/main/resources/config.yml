@@ -1,8 +1,8 @@
 #MYSQL database set up
-#URL is jdbc:mysql://URL:port/tablename
-URL: ''
-USER: ''
-PASSWORD: ''
+#url is jdbc:mysql://URL:port/tablename
+url: ''
+user: ''
+password: ''
 
 # If this is the main server, money in the bank will be automatically withdrawn.
 # Otherwise, money in the economy will automatically be deposited
