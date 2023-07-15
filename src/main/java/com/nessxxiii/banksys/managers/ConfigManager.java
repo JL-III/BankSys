@@ -46,6 +46,7 @@ public class ConfigManager {
         return isMainServer;
     }
 
+    //FIXME does not account for when keys don't exist at all.
     public boolean databaseConnectionValuesAreSet() {
         return getUrl().length() > 0 && getUser().length() > 0 && getPassword().length() > 0;
     }
