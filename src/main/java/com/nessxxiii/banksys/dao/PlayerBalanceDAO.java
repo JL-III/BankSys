@@ -8,6 +8,8 @@ import java.sql.*;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.nessxxiii.banksys.utils.Formatter.getPlayerName;
+
 public class PlayerBalanceDAO {
 
     private final DBConnectionManager dbConnectionManager;
@@ -55,16 +57,16 @@ public class PlayerBalanceDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    customLogger.sendLog("Player balance was found for " + playerUUID + " not creating new entry.");
+                    customLogger.sendLog("Player balance was found for " + getPlayerName(playerUUID) + " not creating new entry.");
                     return;
                 }
-                customLogger.sendLog("Created entry in BankSys for " + playerUUID);
+                customLogger.sendLog("Created entry in BankSys for " + getPlayerName(playerUUID));
             } catch (SQLException e) {
-                customLogger.sendLog("Failed to update entry for " + playerUUID);
+                customLogger.sendLog("Failed to update entry for " + getPlayerName(playerUUID));
                 throw new DatabaseOperationException("Failed to update entry!", e);
             }
         } catch (DatabaseOperationException e) {
-            customLogger.sendLog("Exception while trying to create entry for " + playerUUID);
+            customLogger.sendLog("Exception while trying to create entry for " + getPlayerName(playerUUID));
             throw new RuntimeException("Error while trying to create player balance", e);
         }
     }
