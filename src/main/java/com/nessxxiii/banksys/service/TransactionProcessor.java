@@ -66,7 +66,6 @@ public class TransactionProcessor {
     }
 
     // Check if player has sufficient funds in the economy plugin
-// Side effect: May log the transaction
     private boolean hasSufficientFunds(TransactionType transactionType, int amount, double oldEssentialsBal, UUID playerUUID) {
         if (transactionType == TransactionType.DEPOSIT && amount > oldEssentialsBal) {
             transactionLogger.logTransaction(playerUUID, amount, transactionType, TransactionStatus.INSUFFICIENT_FUNDS);

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -74,24 +75,24 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
 
         if (player.hasPermission("theatria.bank.deposit") && !configManager.isMainServer()) {
             if (args[0].equalsIgnoreCase("deposit") && args.length == 2) {
-                int amount = Validation.processPlayerInputAmount(args[1]);
-                if (amount <= 0) {
+                Optional<Integer> amount = Validation.processPlayerInputAmount(args[1]);
+                if (amount.isEmpty()) {
                     player.sendMessage(ChatColor.RED + "You must provide a whole number greater than 0.");
                     return true;
                 }
-                player.sendMessage(transactionService.deposit(Bukkit.getOfflinePlayer(player.getUniqueId()), amount));
+                player.sendMessage(transactionService.deposit(Bukkit.getOfflinePlayer(player.getUniqueId()), amount.get()));
                 return true;
             }
         }
 
         if (player.hasPermission("theatria.bank.withdraw") && configManager.isMainServer()) {
             if (args[0].equalsIgnoreCase("withdraw") && args.length == 2) {
-                int amount = Validation.processPlayerInputAmount(args[1]);
-                if (amount <= 0) {
+                Optional<Integer> amount = Validation.processPlayerInputAmount(args[1]);
+                if (amount.isEmpty()) {
                     player.sendMessage(ChatColor.RED + "You must provide a whole number greater than 0.");
                     return true;
                 }
-                player.sendMessage(transactionService.withdraw(Bukkit.getOfflinePlayer(player.getUniqueId()), amount));
+                player.sendMessage(transactionService.withdraw(Bukkit.getOfflinePlayer(player.getUniqueId()), amount.get()));
                 return true;
             }
         }

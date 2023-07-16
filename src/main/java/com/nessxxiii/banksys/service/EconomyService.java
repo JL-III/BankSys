@@ -36,6 +36,4 @@ public class EconomyService {
                 + BANK_BALANCE_MESSAGE + formatBalance(newBankBal);
     }
 
-
-
 }

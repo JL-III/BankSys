@@ -14,7 +14,6 @@ public class ResponseHandler {
     public static final String BANK_BALANCE_MESSAGE = "Bank Balance: ";
     public static final String ERROR_MESSAGE = ChatColor.RED + "There was an error processing this command - Contact an admin immediately for help!\n";
 
-
     // Generate a message for insufficient funds
     public static String buildInsufficientFundsMessage(int amount, double oldEssentialsBal) {
         return INSUFFICIENT_FUNDS_MESSAGE

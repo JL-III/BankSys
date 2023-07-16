@@ -22,4 +22,5 @@ public class Formatter {
     public static String formatBalance(double balance) {
         return ChatColor.YELLOW + formatter.format(balance);
     }
+
 }
