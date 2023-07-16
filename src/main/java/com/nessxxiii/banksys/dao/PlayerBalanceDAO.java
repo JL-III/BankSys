@@ -86,6 +86,6 @@ public class PlayerBalanceDAO {
             }
 
         }
-        throw new SQLException("There was an issue updating the player balance.");
+        throw new SQLException("There was an issue updating the player balance, currentBalance was empty when called from updatePlayerBalance method.");
     }
 }

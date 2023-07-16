@@ -35,6 +35,7 @@ public class BankService {
         } catch (SQLException ex) {
             // Log failure to update balance in database
             customLogger.sendLog("Failed to update bank balance for player " + playerUUID + " during " + transactionType);
+            ex.printStackTrace();
             return Optional.empty();
         }
     }

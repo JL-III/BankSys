@@ -10,7 +10,7 @@ public class ResponseHandler {
     private static final String INSUFFICIENT_FUNDS_MESSAGE = ChatColor.RED + "You do not have sufficient funds!\nDeposit Requested: ";
     public static final String WALLET_BALANCE_MESSAGE = ChatColor.RED + "Wallet: ";
     public static final String TRANSACTION_SUCCESS_MESSAGE = ChatColor.GREEN + "Successful ";
-    public static final String BALANCE_MESSAGE = "Balance: ";
+    public static final String WALLET_BALANCE = "Wallet: ";
     public static final String BANK_BALANCE_MESSAGE = "Bank Balance: ";
     public static final String ERROR_MESSAGE = ChatColor.RED + "There was an error processing this command - Contact an admin immediately for help!\n";
 

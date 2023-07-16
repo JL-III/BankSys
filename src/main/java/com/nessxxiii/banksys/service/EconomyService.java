@@ -32,7 +32,7 @@ public class EconomyService {
         // Log transaction as successful
         transactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, response.balance, transactionType, TransactionStatus.SUCCESS);
         return TRANSACTION_SUCCESS_MESSAGE + transactionType + " of " + formatAmount(amount) + ChatColor.GREEN + "\n"
-                + BALANCE_MESSAGE + formatBalance(response.balance) + ChatColor.LIGHT_PURPLE + "\n"
+                + WALLET_BALANCE + formatBalance(response.balance) + ChatColor.LIGHT_PURPLE + "\n"
                 + BANK_BALANCE_MESSAGE + formatBalance(newBankBal);
     }
 
