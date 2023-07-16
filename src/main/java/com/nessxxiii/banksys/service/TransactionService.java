@@ -4,7 +4,6 @@ import com.nessxxiii.banksys.dao.PlayerBalanceDAO;
 import com.nessxxiii.banksys.enums.TransactionType;
 import com.nessxxiii.banksys.exceptions.DatabaseOperationException;
 import com.nessxxiii.banksys.logging.TransactionLogger;
-import com.nessxxiii.banksys.utils.Processor;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -19,12 +18,12 @@ import static com.nessxxiii.banksys.utils.Formatter.formatBalance;
 public class TransactionService {
     private final PlayerBalanceDAO playerBalanceDAO;
     private final Economy economy;
-    private final Processor processor;
+    private final TransactionProcessor transactionProcessor;
 
     public TransactionService(Economy economy, PlayerBalanceDAO playerBalanceDAO, CustomLogger customLogger) {
         this.economy = economy;
         this.playerBalanceDAO = playerBalanceDAO;
-        this.processor = new Processor(economy, new TransactionLogger(), playerBalanceDAO, customLogger);
+        this.transactionProcessor = new TransactionProcessor(economy, new TransactionLogger(), playerBalanceDAO, customLogger);
     }
 
     //Used for the balance command
@@ -43,11 +42,11 @@ public class TransactionService {
     }
 
     public String deposit(OfflinePlayer player, int amount) {
-       return processor.processTransaction(player, amount, TransactionType.DEPOSIT, economy::withdrawPlayer);
+       return transactionProcessor.processTransaction(player, amount, TransactionType.DEPOSIT, economy::withdrawPlayer);
     }
 
     public String withdraw(OfflinePlayer player, int amount) {
-       return processor.processTransaction(player, amount, TransactionType.WITHDRAWAL, economy::depositPlayer);
+       return transactionProcessor.processTransaction(player, amount, TransactionType.WITHDRAWAL, economy::depositPlayer);
     }
 
 }
