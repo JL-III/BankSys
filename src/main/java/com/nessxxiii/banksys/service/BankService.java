@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.nessxxiii.banksys.utils.Formatter.getPlayerName;
+
 public class BankService {
 
     // Method for processing transactions in the bank system (database)
@@ -34,7 +36,7 @@ public class BankService {
             }
         } catch (SQLException ex) {
             // Log failure to update balance in database
-            customLogger.sendLog("Failed to update bank balance for player " + playerUUID + " during " + transactionType);
+            customLogger.sendLog("Failed to update bank balance for player " + getPlayerName(playerUUID) + " during " + transactionType);
             ex.printStackTrace();
             return Optional.empty();
         }
