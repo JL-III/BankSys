@@ -11,7 +11,6 @@ import com.playtheatria.jliii.generalutils.utils.CustomLogger;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,16 +21,12 @@ public final class BankSys extends JavaPlugin {
     private final CustomLogger customLogger = new CustomLogger(this.getName(), NamedTextColor.GREEN, NamedTextColor.YELLOW);
     private static Economy economy = null;
     private DBConnectionManager dBConnectionManager;
-    private PlayerBalanceDAO playerBalanceDAO;
-    private TransactionService transactionService;
-    private ConfigManager configManager;
-    private PlayerCommands playerCommands;
 
     @Override
     public void onEnable() {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
-        this.configManager = new ConfigManager(this);
+        ConfigManager configManager = new ConfigManager(this);
         if (configManager.databaseConnectionValuesAreSet()) {
             if (!setupEconomy()) {
                 customLogger.sendLog("Disabled due to no Vault dependency found!");
@@ -40,10 +35,10 @@ public final class BankSys extends JavaPlugin {
             }
             try {
                 dBConnectionManager = new DBConnectionManager(configManager);
-                playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
+                PlayerBalanceDAO playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
                 playerBalanceDAO.initializeDatabase();
-                transactionService = new TransactionService(economy, playerBalanceDAO, customLogger);
-                playerCommands = new PlayerCommands(economy, transactionService, configManager, new CooldownManager(configManager), customLogger);
+                TransactionService transactionService = new TransactionService(economy, playerBalanceDAO, customLogger);
+                PlayerCommands playerCommands = new PlayerCommands(economy, transactionService, configManager, new CooldownManager(configManager), customLogger);
                 Bukkit.getPluginManager().registerEvents(new PlayerJoin(playerBalanceDAO), this);
                 Objects.requireNonNull(getCommand("bank")).setExecutor(playerCommands);
                 Objects.requireNonNull(getCommand("bank")).setTabCompleter(playerCommands);

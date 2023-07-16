@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoin implements Listener {
 
-    private PlayerBalanceDAO playerBalanceDAO;
+    private final PlayerBalanceDAO playerBalanceDAO;
 
     public PlayerJoin(PlayerBalanceDAO playerBalanceDAO) {
         this.playerBalanceDAO = playerBalanceDAO;
