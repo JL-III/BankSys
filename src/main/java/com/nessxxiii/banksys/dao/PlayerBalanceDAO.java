@@ -20,13 +20,14 @@ public class PlayerBalanceDAO {
 
     public void initializeDatabase() throws DatabaseOperationException {
         try (Connection connection = dbConnectionManager.getConnection();
-                Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key, balance INT(30))");
+             Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE IF NOT EXISTS player_bank(playerUUID varchar(50) primary key, balance INT CHECK (balance >= 0))");
         } catch (SQLException e) {
             customLogger.sendLog("Exception while initializing database: " + e.getMessage());
             throw new DatabaseOperationException("Failed to initialize database!", e);
         }
     }
+
 
     public Optional<Integer> findPlayerBalance(UUID playerUUID) throws SQLException {
         Optional<Integer> balance = Optional.empty();
