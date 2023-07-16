@@ -18,7 +18,7 @@ import static com.nessxxiii.banksys.utils.ResponseHandler.*;
 public class EconomyService {
 
     // Method for processing transactions in the economy plugin and bank system (database)
-    // Side effect: May update player balance in the economy plugin and database, and log the transaction
+    // Side effect: May update player balance in the economy plugin and log the transaction
     public static String processEconomyTransactionAndLog(Economy economy, TransactionLogger transactionLogger, OfflinePlayer player, int amount, TransactionType transactionType, BiFunction<OfflinePlayer, Integer, EconomyResponse> transactionFunc, UUID playerUUID, double oldEssentialsBal, int oldBankBal, int newBankBal) {
         // Process transaction in the economy plugin
         EconomyResponse response = transactionFunc.apply(player, amount);
