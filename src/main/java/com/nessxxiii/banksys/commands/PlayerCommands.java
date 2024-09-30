@@ -27,8 +27,6 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
     private final CustomLogger customLogger;
     private CooldownManager cooldownManager;
 
-    private final String bankBalOtherPermission = "theatria.bank.bal.other";
-
     public PlayerCommands(TransactionService transactionService, ConfigManager configManager, CooldownManager cooldownManager, CustomLogger customLogger) {
         this.transactionService = transactionService;
         this.configManager = configManager;
@@ -56,7 +54,7 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
             cooldownManager.updateCooldown(player.getUniqueId());
         }
 
-        if (player.hasPermission(bankBalOtherPermission)) {
+        if (player.hasPermission(configManager.getBankBalOtherPermission())) {
             if (("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) && args.length == 2) {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
                 Response<String> stringResponse = transactionService.inquiry(offlinePlayer.getUniqueId());
@@ -71,14 +69,14 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
             }
         }
 
-        if (player.hasPermission("theatria.bank.bal.self")) {
+        if (player.hasPermission(configManager.getBankBalSelfPermission())) {
             if ("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) {
                 player.sendMessage(ChatColor.LIGHT_PURPLE + "Bank Balance: " + ChatColor.YELLOW + transactionService.inquiry(player.getUniqueId()));
                 return true;
             }
         }
 
-        if (player.hasPermission("theatria.bank.deposit") && !configManager.isMainServer()) {
+        if (player.hasPermission(configManager.getBankDepositPermission()) && !configManager.isMainServer()) {
             if (args[0].equalsIgnoreCase("deposit") && args.length == 2) {
                 Optional<Integer> amount = Validation.processPlayerInputAmount(args[1]);
                 if (amount.isEmpty()) {
@@ -90,7 +88,7 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
             }
         }
 
-        if (player.hasPermission("theatria.bank.withdraw") && configManager.isMainServer()) {
+        if (player.hasPermission(configManager.getBankWithdrawPermission()) && configManager.isMainServer()) {
             if (args[0].equalsIgnoreCase("withdraw") && args.length == 2) {
                 Optional<Integer> amount = Validation.processPlayerInputAmount(args[1]);
                 if (amount.isEmpty()) {
@@ -111,7 +109,7 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if (commandSender instanceof Player player) {
-            if (args[0].equalsIgnoreCase("bal") && args.length == 2 && player.hasPermission(bankBalOtherPermission)) {
+            if (args[0].equalsIgnoreCase("bal") && args.length == 2 && player.hasPermission(configManager.getBankBalOtherPermission())) {
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
             }
             if (args.length == 1) {

@@ -26,8 +26,8 @@ public class EconomyService {
         // Check if the economy transaction was successful
         if (!response.transactionSuccess()) {
             // Log transaction as unsuccessful
-            TransactionLogger.logTransaction(playerUUID, amount, oldBankBal, null, oldEssentialsBal, economy.getBalance(player), transactionType, TransactionStatus.ERROR_E3);
-            return ERROR_MESSAGE + TransactionStatus.ERROR_E3;
+            TransactionLogger.logTransaction(playerUUID, amount, oldBankBal, null, oldEssentialsBal, economy.getBalance(player), transactionType, TransactionStatus.FAILURE);
+            return ERROR_MESSAGE;
         }
         // Log transaction as successful
         TransactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, response.balance, transactionType, TransactionStatus.SUCCESS);
