@@ -29,5 +29,4 @@ public class ResponseHandler {
                 + "Requested Amount: " + formatAmount(amount) + ChatColor.LIGHT_PURPLE + "\n"
                 + BANK_BALANCE_MESSAGE + formatBalance(oldBankBal);
     }
-
 }

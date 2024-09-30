@@ -2,15 +2,11 @@ package com.nessxxiii.banksys.service;
 
 import com.nessxxiii.banksys.dao.PlayerBalanceDAO;
 import com.nessxxiii.banksys.enums.TransactionType;
-import com.nessxxiii.banksys.exceptions.DatabaseOperationException;
-import com.nessxxiii.banksys.logging.TransactionLogger;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
+import com.playtheatria.jliii.generalutils.utils.Response;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import java.sql.SQLException;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.nessxxiii.banksys.utils.Formatter.formatBalance;
@@ -23,21 +19,16 @@ public class TransactionService {
     public TransactionService(Economy economy, PlayerBalanceDAO playerBalanceDAO, CustomLogger customLogger) {
         this.economy = economy;
         this.playerBalanceDAO = playerBalanceDAO;
-        this.transactionProcessor = new TransactionProcessor(economy, new TransactionLogger(), playerBalanceDAO, customLogger);
+        this.transactionProcessor = new TransactionProcessor(economy, playerBalanceDAO, customLogger);
     }
 
     //Used for the balance command
-    public String inquiry(UUID playerUUID) {
-        try {
-            Optional<Integer> optionalPlayerBalance = playerBalanceDAO.findPlayerBalance(playerUUID);
-            if (optionalPlayerBalance.isPresent()) {
-                return formatBalance(optionalPlayerBalance.get());
-            } else {
-                throw new DatabaseOperationException("No player found");
-            }
-        } catch (SQLException | DatabaseOperationException e) {
-            Bukkit.getConsoleSender().sendMessage("BankSys: "+ e.getMessage());
-            return "No bank balance exists.";
+    public Response<String> inquiry(UUID playerUUID) {
+        Response<Integer> integerResponse = playerBalanceDAO.findPlayerBalance(playerUUID);
+        if (integerResponse.isSuccess()) {
+            return Response.success(formatBalance(integerResponse.value()));
+        } else {
+            return Response.failure(integerResponse.error());
         }
     }
 

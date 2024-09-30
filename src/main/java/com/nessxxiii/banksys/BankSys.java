@@ -28,27 +28,28 @@ public final class BankSys extends JavaPlugin {
         saveDefaultConfig();
         ConfigManager configManager = new ConfigManager(this);
         if (configManager.databaseConnectionValuesAreSet()) {
-            if (!setupEconomy()) {
-                customLogger.sendLog("Disabled due to no Vault dependency found!");
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-            try {
-                dBConnectionManager = new DBConnectionManager(configManager);
-                PlayerBalanceDAO playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
-                playerBalanceDAO.initializeDatabase();
-                TransactionService transactionService = new TransactionService(economy, playerBalanceDAO, customLogger);
-                PlayerCommands playerCommands = new PlayerCommands(economy, transactionService, configManager, new CooldownManager(configManager), customLogger);
-                Bukkit.getPluginManager().registerEvents(new PlayerJoin(playerBalanceDAO), this);
-                Objects.requireNonNull(getCommand("bank")).setExecutor(playerCommands);
-                Objects.requireNonNull(getCommand("bank")).setTabCompleter(playerCommands);
-                customLogger.sendLog("Successfully initialized!");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                getServer().getPluginManager().disablePlugin(this);
-            }
-        } else {
             customLogger.sendLog("Database connection values are not set, this plugin will not do anything until they are set.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        if (!setupEconomy()) {
+            customLogger.sendLog("Disabled due to no Vault dependency found!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        try {
+            dBConnectionManager = new DBConnectionManager(configManager);
+            PlayerBalanceDAO playerBalanceDAO = new PlayerBalanceDAO(dBConnectionManager, customLogger);
+            playerBalanceDAO.initializeDatabase();
+            TransactionService transactionService = new TransactionService(economy, playerBalanceDAO, customLogger);
+            PlayerCommands playerCommands = new PlayerCommands(transactionService, configManager, new CooldownManager(configManager), customLogger);
+            Bukkit.getPluginManager().registerEvents(new PlayerJoin(playerBalanceDAO), this);
+            Objects.requireNonNull(getCommand("bank")).setExecutor(playerCommands);
+            Objects.requireNonNull(getCommand("bank")).setTabCompleter(playerCommands);
+            customLogger.sendLog("Successfully initialized!");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
         }
     }
 
@@ -78,5 +79,4 @@ public final class BankSys extends JavaPlugin {
         economy = registeredServiceProvider.getProvider();
         return true;
     }
-
 }
