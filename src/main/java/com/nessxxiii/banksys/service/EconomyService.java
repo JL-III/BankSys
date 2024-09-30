@@ -19,21 +19,20 @@ public class EconomyService {
 
     // Method for processing transactions in the economy plugin and bank system (database)
     // Side effect: May update player balance in the economy plugin and log the transaction
-    public static String processEconomyTransactionAndLog(Economy economy, TransactionLogger transactionLogger, OfflinePlayer player, int amount, TransactionType transactionType, BiFunction<OfflinePlayer, Integer, EconomyResponse> transactionFunc, UUID playerUUID, double oldEssentialsBal, int oldBankBal, int newBankBal) {
+    public static String processEconomyTransactionAndLog(Economy economy, OfflinePlayer player, int amount, TransactionType transactionType, BiFunction<OfflinePlayer, Integer, EconomyResponse> transactionFunc, UUID playerUUID, double oldEssentialsBal, int oldBankBal, int newBankBal) {
         // Process transaction in the economy plugin
         EconomyResponse response = transactionFunc.apply(player, amount);
 
         // Check if the economy transaction was successful
         if (!response.transactionSuccess()) {
             // Log transaction as unsuccessful
-            transactionLogger.logTransaction(playerUUID, amount, oldBankBal, null, oldEssentialsBal, economy.getBalance(player), transactionType, TransactionStatus.ERROR_E3);
+            TransactionLogger.logTransaction(playerUUID, amount, oldBankBal, null, oldEssentialsBal, economy.getBalance(player), transactionType, TransactionStatus.ERROR_E3);
             return ERROR_MESSAGE + TransactionStatus.ERROR_E3;
         }
         // Log transaction as successful
-        transactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, response.balance, transactionType, TransactionStatus.SUCCESS);
+        TransactionLogger.logTransaction(playerUUID, amount, oldBankBal, newBankBal, oldEssentialsBal, response.balance, transactionType, TransactionStatus.SUCCESS);
         return TRANSACTION_SUCCESS_MESSAGE + transactionType + " of " + formatAmount(amount) + ChatColor.GREEN + "\n"
                 + WALLET_BALANCE + formatBalance(response.balance) + ChatColor.LIGHT_PURPLE + "\n"
                 + BANK_BALANCE_MESSAGE + formatBalance(newBankBal);
     }
-
 }

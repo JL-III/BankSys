@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 
 import java.text.NumberFormat;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 
 public class Formatter {

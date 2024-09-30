@@ -95,6 +95,4 @@ public class TransactionLog {
     public void setNewEssentialsBal(Integer newEssentialsBal) {
         this.newEssentialsBal = newEssentialsBal;
     }
-
-
 }

@@ -5,7 +5,7 @@ import com.nessxxiii.banksys.managers.CooldownManager;
 import com.nessxxiii.banksys.service.TransactionService;
 import com.nessxxiii.banksys.utils.Validation;
 import com.playtheatria.jliii.generalutils.utils.CustomLogger;
-import net.milkbowl.vault.economy.Economy;
+import com.playtheatria.jliii.generalutils.utils.Response;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 public class PlayerCommands implements CommandExecutor, TabCompleter {
 
-    private final Economy economy;
     private final TransactionService transactionService;
 
     private final ConfigManager configManager;
@@ -30,8 +29,7 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
 
     private final String bankBalOtherPermission = "theatria.bank.bal.other";
 
-    public PlayerCommands(Economy economy, TransactionService transactionService, ConfigManager configManager, CooldownManager cooldownManager, CustomLogger customLogger) {
-        this.economy = economy;
+    public PlayerCommands(TransactionService transactionService, ConfigManager configManager, CooldownManager cooldownManager, CustomLogger customLogger) {
         this.transactionService = transactionService;
         this.configManager = configManager;
         this.customLogger = customLogger;
@@ -61,7 +59,14 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
         if (player.hasPermission(bankBalOtherPermission)) {
             if (("balance".equalsIgnoreCase(args[0]) || ("bal".equalsIgnoreCase(args[0]))) && args.length == 2) {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
-                player.sendMessage(transactionService.inquiry(offlinePlayer.getUniqueId()));
+                Response<String> stringResponse = transactionService.inquiry(offlinePlayer.getUniqueId());
+                if (stringResponse.isSuccess()) {
+                    player.sendMessage(stringResponse.value());
+                    return true;
+                } else {
+                    player.sendMessage(stringResponse.error());
+                    customLogger.sendLog(stringResponse.error());
+                }
                 return true;
             }
         }
@@ -96,7 +101,6 @@ public class PlayerCommands implements CommandExecutor, TabCompleter {
                 return true;
             }
         }
-
         return true;
     }
 
