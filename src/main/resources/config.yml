@@ -13,3 +13,8 @@ cooldown: 30
 
 # Minimum amount for each transaction.
 minimum-amount: 10000
+
+bank-bal-self-permission: "theatria.bank.bal.self"
+bank-bal-other-permission: "theatria.bank.bal.other"
+bank-deposit-permission: "theatria.bank.deposit"
+bank-withdraw-permission: "theatria.bank.withdraw"

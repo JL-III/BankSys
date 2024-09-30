@@ -39,5 +39,4 @@ public class TransactionService {
     public String withdraw(OfflinePlayer player, int amount) {
        return transactionProcessor.processTransaction(player, amount, TransactionType.WITHDRAWAL, economy::depositPlayer);
     }
-
 }

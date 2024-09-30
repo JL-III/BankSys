@@ -21,5 +21,4 @@ public class TransactionLogger {
         String name = Bukkit.getOfflinePlayer(playerUUID).getName();
         new TransactionLog(name, amount, transactionType, transactionStatus).print();
     }
-
 }

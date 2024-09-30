@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public final class BankSys extends JavaPlugin {
-    private final CustomLogger customLogger = new CustomLogger(this.getName(), NamedTextColor.GREEN, NamedTextColor.YELLOW);
+    private final CustomLogger customLogger = new CustomLogger(this.getName(), NamedTextColor.GREEN, NamedTextColor.BLUE);
     private static Economy economy = null;
     private DBConnectionManager dBConnectionManager;
 
@@ -27,7 +27,7 @@ public final class BankSys extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         ConfigManager configManager = new ConfigManager(this);
-        if (configManager.databaseConnectionValuesAreSet()) {
+        if (!configManager.databaseConnectionValuesAreSet()) {
             customLogger.sendLog("Database connection values are not set, this plugin will not do anything until they are set.");
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -69,13 +69,10 @@ public final class BankSys extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
-
         RegisteredServiceProvider<Economy> registeredServiceProvider = getServer().getServicesManager().getRegistration(Economy.class);
-
         if (registeredServiceProvider == null) {
             return false;
         }
-
         economy = registeredServiceProvider.getProvider();
         return true;
     }
